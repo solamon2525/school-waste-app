@@ -215,8 +215,45 @@ body{font-family:Sarabun,sans-serif;min-height:100vh;overflow-x:hidden;backgroun
 .spinner{width:44px;height:44px;border:3px solid rgba(255,255,255,.1);border-top-color:#4ade80;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* ─── LAYOUT VARIANTS ─── */
+.apps-grid.cols-1{grid-template-columns:1fr}
+.apps-grid.cols-2{grid-template-columns:1fr 1fr}
+.apps-grid.cols-3{grid-template-columns:1fr 1fr 1fr}
+.apps-grid.cols-3 .app-card{padding:14px 12px 12px}
+.apps-grid.cols-3 .app-icon{font-size:28px;margin-bottom:8px}
+.apps-grid.cols-3 .app-name{font-size:13px}
+.apps-grid.cols-3 .app-desc{font-size:11px}
+.apps-grid.cols-1 .app-card:not(.wide){display:flex;gap:16px;align-items:center;padding:16px 18px}
+.apps-grid.cols-1 .app-card:not(.wide) .app-icon{font-size:36px;margin:0;flex-shrink:0}
+.apps-grid.cols-1 .app-card:not(.wide) .app-name{font-size:15px}
+.apps-grid.cols-1 .app-card:not(.wide) .arr{position:static;margin-left:auto}
+/* card size */
+.apps-grid.size-sm .app-card:not(.wide){padding:12px}
+.apps-grid.size-sm .app-icon{font-size:28px;margin-bottom:8px}
+.apps-grid.size-sm .app-name{font-size:13px}
+.apps-grid.size-sm .app-desc{display:none}
+.apps-grid.size-lg .app-card:not(.wide){padding:26px 20px 20px}
+.apps-grid.size-lg .app-icon{font-size:50px;margin-bottom:16px}
+.apps-grid.size-lg .app-name{font-size:17px}
+.apps-grid.size-lg .app-desc{font-size:13px}
+/* ─── LAYOUT PICKER UI ─── */
+.layout-section{margin-bottom:18px}
+.layout-section-label{font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.layout-section-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.06)}
+.layout-btn-group{display:flex;gap:8px}
+.layout-btn{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 6px;cursor:pointer;transition:all .2s;text-align:center;font-family:Sarabun,sans-serif;color:var(--muted)}
+.layout-btn:hover{border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.06)}
+.layout-btn.active{background:rgba(74,222,128,.15);border-color:#4ade80;color:#4ade80}
+.layout-btn-label{font-size:11px;font-weight:700;margin-top:4px}
+.layout-preview{display:flex;gap:3px;justify-content:center;margin-bottom:6px;height:20px;align-items:flex-end}
+.lp-block{border-radius:3px;background:currentColor;opacity:.5}
+.wide-toggle-row{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 16px}
+.wide-toggle-info{font-size:13px;font-weight:700;color:var(--text)}
+.wide-toggle-sub{font-size:11px;color:var(--muted);margin-top:2px}
 @media(max-width:420px){
   .apps-grid{grid-template-columns:1fr}
+  .apps-grid.cols-2{grid-template-columns:1fr 1fr}
+  .apps-grid.cols-3{grid-template-columns:1fr 1fr 1fr}
   .wide{grid-column:1}
   .school-name{font-size:22px}
 }
@@ -235,15 +272,10 @@ body{font-family:Sarabun,sans-serif;min-height:100vh;overflow-x:hidden;backgroun
     <div class="logo-box" id="main-logo"><span id="main-logo-emoji">🏫</span></div>
     <div class="school-name" id="main-school-name">Super App บ้านคำไผ่</div>
     <div class="school-sub" id="main-school-sub">ระบบบริหารจัดการโรงเรียนออนไลน์</div>
-    <div class="greeting"><span class="dot"></span><span id="greeting-txt">สวัสดี!</span></div>
+    <div class="greeting"><span class="dot"></span><span id="greeting-txt"></span></div>
   </div>
 
-  <div class="stats-bar">
-    <div class="chip"><div class="chip-num" id="qs-waste">—</div><div class="chip-lbl">♻️ ขยะรวม (ชิ้น)</div></div>
-    <div class="chip"><div class="chip-num" id="qs-members">—</div><div class="chip-lbl">👤 นักเรียนในระบบ</div></div>
-    <div class="chip"><div class="chip-num" id="qs-records">—</div><div class="chip-lbl">📋 ครั้งที่บันทึก</div></div>
-    <div class="chip"><div class="chip-num" id="qs-today">—</div><div class="chip-lbl">📅 วันนี้ (ชิ้น)</div></div>
-  </div>
+
 
   <div id="apps-render"></div>
 
@@ -288,6 +320,7 @@ body{font-family:Sarabun,sans-serif;min-height:100vh;overflow-x:hidden;backgroun
       <div class="tab active" onclick="switchTab('tab-logo')">🖼️ โลโก้</div>
       <div class="tab" onclick="switchTab('tab-text')">✏️ ข้อความ</div>
       <div class="tab" onclick="switchTab('tab-apps')">📱 แอป</div>
+      <div class="tab" onclick="switchTab('tab-layout')">🔲 จัดวาง</div>
     </div>
 
     <!-- TAB: LOGO -->
@@ -323,6 +356,105 @@ body{font-family:Sarabun,sans-serif;min-height:100vh;overflow-x:hidden;backgroun
       <div class="drag-list" id="drag-list"></div>
       <div class="save-row">
         <button class="btn btn-green" onclick="saveApps()" style="flex:1">💾 บันทึกลำดับแอป</button>
+      </div>
+    </div>
+
+    <!-- TAB: LAYOUT -->
+    <div class="admin-sec" id="tab-layout">
+
+      <!-- จำนวนคอลัมน์ -->
+      <div class="layout-section">
+        <div class="layout-section-label">📐 จำนวนคอลัมน์</div>
+        <div class="layout-btn-group" id="cols-group">
+          <button class="layout-btn" data-cols="1" onclick="setLayout('cols','1')">
+            <div class="layout-preview"><div class="lp-block" style="width:100%;height:18px"></div></div>
+            <div class="layout-btn-label">1 คอลัมน์</div>
+          </button>
+          <button class="layout-btn active" data-cols="2" onclick="setLayout('cols','2')">
+            <div class="layout-preview">
+              <div class="lp-block" style="flex:1;height:18px"></div>
+              <div class="lp-block" style="flex:1;height:18px"></div>
+            </div>
+            <div class="layout-btn-label">2 คอลัมน์</div>
+          </button>
+          <button class="layout-btn" data-cols="3" onclick="setLayout('cols','3')">
+            <div class="layout-preview">
+              <div class="lp-block" style="flex:1;height:18px"></div>
+              <div class="lp-block" style="flex:1;height:18px"></div>
+              <div class="lp-block" style="flex:1;height:18px"></div>
+            </div>
+            <div class="layout-btn-label">3 คอลัมน์</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- ขนาดการ์ด -->
+      <div class="layout-section">
+        <div class="layout-section-label">📏 ขนาดการ์ด</div>
+        <div class="layout-btn-group" id="size-group">
+          <button class="layout-btn" data-size="sm" onclick="setLayout('size','sm')">
+            <div class="layout-preview" style="height:24px;align-items:center">
+              <div class="lp-block" style="width:28px;height:12px"></div>
+            </div>
+            <div class="layout-btn-label">เล็ก</div>
+          </button>
+          <button class="layout-btn active" data-size="md" onclick="setLayout('size','md')">
+            <div class="layout-preview" style="height:24px;align-items:center">
+              <div class="lp-block" style="width:36px;height:16px"></div>
+            </div>
+            <div class="layout-btn-label">กลาง</div>
+          </button>
+          <button class="layout-btn" data-size="lg" onclick="setLayout('size','lg')">
+            <div class="layout-preview" style="height:24px;align-items:center">
+              <div class="lp-block" style="width:44px;height:20px"></div>
+            </div>
+            <div class="layout-btn-label">ใหญ่</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- แอปแรก full-width -->
+      <div class="layout-section">
+        <div class="layout-section-label">🔝 แอปแรก (Featured)</div>
+        <div class="wide-toggle-row">
+          <div>
+            <div class="wide-toggle-info">แสดงแอปแรกแบบ Full Width</div>
+            <div class="wide-toggle-sub">เปิด = แอปแรกในหมวด "พร้อมใช้งาน" คาดทั้งแถว</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="layout-wide-first" onchange="setWideFirst(this.checked)"/>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- ซ่อน/แสดง Section "เร็วๆ นี้" -->
+      <div class="layout-section">
+        <div class="layout-section-label">👁️ การแสดงผล</div>
+        <div class="wide-toggle-row" style="margin-bottom:8px">
+          <div>
+            <div class="wide-toggle-info">แสดงหมวด "เร็วๆ นี้"</div>
+            <div class="wide-toggle-sub">ปิด = ซ่อนแอปที่ยังไม่พร้อมทั้งหมด</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="layout-show-coming" onchange="setLayoutOption('showComing',this.checked)" checked/>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="wide-toggle-row">
+          <div>
+            <div class="wide-toggle-info">แสดง Section Header</div>
+            <div class="wide-toggle-sub">ปิด = ซ่อนหัวข้อ "🟢 พร้อมใช้งาน / 🔜 เร็วๆ นี้"</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="layout-show-header" onchange="setLayoutOption('showHeader',this.checked)" checked/>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="save-row">
+        <button class="btn btn-green" onclick="saveLayout()" style="flex:1">💾 บันทึกการจัดวาง</button>
       </div>
     </div>
 
@@ -440,7 +572,8 @@ let cfg = {
   noticeTxt:  '<b>เพิ่มแอปใหม่ได้ตลอด!</b> ติดต่อผู้พัฒนาเพื่อเพิ่มแอปที่ต้องการ',
   footer:     'Super App บ้านคำไผ่ • พัฒนาด้วย ❤️ เพื่อการศึกษา',
   logoData:   null,
-  apps:       JSON.parse(JSON.stringify(DEFAULT_APPS))
+  apps:       JSON.parse(JSON.stringify(DEFAULT_APPS)),
+  layout: { cols:'2', size:'md', wideFirst:false, showComing:true, showHeader:true }
 };
 let pendingLogoData = null;
 
@@ -458,6 +591,7 @@ db.ref('superapp_config').on('value', snap => {
     if(v.footer)     cfg.footer     = v.footer;
     if(v.logoData)   cfg.logoData   = v.logoData;
     if(v.apps && Array.isArray(v.apps)) cfg.apps = v.apps;
+    if(v.layout) cfg.layout = {...cfg.layout, ...v.layout};
   }
   applyConfig();
   showLoading(false);
@@ -481,6 +615,7 @@ function applyConfig(){
   }
 
   renderApps(cfg.apps);
+  applyLayoutUI();
 
   document.getElementById('txt-name').value    = cfg.schoolName;
   document.getElementById('txt-sub').value     = cfg.schoolSub;
@@ -494,15 +629,22 @@ function applyConfig(){
 // ═══════════════════════════════════════
 function renderApps(apps){
   const container = document.getElementById('apps-render');
+  const L = cfg.layout;
+  const colClass  = 'cols-'+(L.cols||'2');
+  const sizeClass = L.size && L.size!=='md' ? 'size-'+L.size : '';
+  const gridClass = ['apps-grid', colClass, sizeClass].filter(Boolean).join(' ');
+
   const liveApps   = apps.filter(a => a.visible && a.live);
   const comingApps = apps.filter(a => a.visible && !a.live);
 
   let html = '';
 
   if(liveApps.length){
-    html += `<div class="sec-title">🟢 พร้อมใช้งาน</div><div class="apps-grid">`;
-    liveApps.forEach(a => {
-      const wide = a.wide ? 'wide' : '';
+    if(L.showHeader !== false) html += `<div class="sec-title">🟢 พร้อมใช้งาน</div>`;
+    html += `<div class="${gridClass}">`;
+    liveApps.forEach((a,i) => {
+      const isWide = L.wideFirst ? (i===0) : a.wide;
+      const wide = isWide ? 'wide' : '';
       html += `<a href="${a.url}" class="app-card ${a.color} ${wide}">
         ${wide ? '' : `<span class="badge badge-live">● LIVE</span>`}
         <span class="app-icon">${a.icon}</span>
@@ -516,8 +658,9 @@ function renderApps(apps){
     html += `</div>`;
   }
 
-  if(comingApps.length){
-    html += `<div class="sec-title">🔜 เร็วๆ นี้</div><div class="apps-grid">`;
+  if(comingApps.length && L.showComing !== false){
+    if(L.showHeader !== false) html += `<div class="sec-title">🔜 เร็วๆ นี้</div>`;
+    html += `<div class="${gridClass}">`;
     comingApps.forEach(a => {
       html += `<div class="app-card cc">
         <span class="badge badge-soon">เร็วๆ นี้</span>
@@ -551,13 +694,16 @@ db.ref('members').on('value', snap => {
 });
 
 // ═══════════════════════════════════════
-//  GREETING
+//  THAI DATE
 // ═══════════════════════════════════════
-const h = new Date().getHours();
-document.getElementById('greeting-txt').textContent =
-  h<12 ? 'อรุณสวัสดิ์! ☀️ พร้อมเรียนรู้วันนี้ไหม?' :
-  h<17 ? 'สวัสดีตอนบ่าย! 🌤️ อย่าลืมดูแลสิ่งแวดล้อม' :
-         'สวัสดีตอนเย็น! 🌙 วันนี้เก็บขยะไปเท่าไหร่?';
+const DAYS_TH   = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+const MONTHS_TH = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const now = new Date();
+const dayName = DAYS_TH[now.getDay()];
+const date    = now.getDate();
+const month   = MONTHS_TH[now.getMonth()];
+const year    = now.getFullYear() + 543;
+document.getElementById('greeting-txt').textContent = `วัน${dayName} ที่ ${date} เดือน${month} ปี ${year}`;
 
 // ═══════════════════════════════════════
 //  PARTICLES
@@ -645,7 +791,7 @@ function openAdminPanel(){
 // ═══════════════════════════════════════
 function switchTab(id){
   document.querySelectorAll('.tab').forEach((t,i) => {
-    const tabs=['tab-logo','tab-text','tab-apps'];
+    const tabs=['tab-logo','tab-text','tab-apps','tab-layout'];
     t.classList.toggle('active', tabs[i]===id);
   });
   document.querySelectorAll('.admin-sec').forEach(s => s.classList.toggle('active', s.id===id));
@@ -796,6 +942,51 @@ function addTouchDrag(item, list){
 document.querySelectorAll('.modal-bg').forEach(bg=>{
   bg.addEventListener('click', e=>{ if(e.target===bg) bg.classList.remove('open'); });
 });
+
+
+// ═══════════════════════════════════════
+//  LAYOUT TAB
+// ═══════════════════════════════════════
+function applyLayoutUI(){
+  const L = cfg.layout;
+  // cols
+  document.querySelectorAll('#cols-group .layout-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.cols === (L.cols||'2')));
+  // size
+  document.querySelectorAll('#size-group .layout-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.size === (L.size||'md')));
+  // toggles
+  const wf = document.getElementById('layout-wide-first');
+  if(wf) wf.checked = !!L.wideFirst;
+  const sc = document.getElementById('layout-show-coming');
+  if(sc) sc.checked = L.showComing !== false;
+  const sh = document.getElementById('layout-show-header');
+  if(sh) sh.checked = L.showHeader !== false;
+}
+
+function setLayout(type, val){
+  if(type==='cols') cfg.layout.cols = val;
+  if(type==='size') cfg.layout.size = val;
+  applyLayoutUI();
+  renderApps(cfg.apps); // live preview
+}
+
+function setWideFirst(v){
+  cfg.layout.wideFirst = v;
+  renderApps(cfg.apps);
+}
+
+function setLayoutOption(key, v){
+  cfg.layout[key] = v;
+  renderApps(cfg.apps);
+}
+
+async function saveLayout(){
+  try{
+    await db.ref('superapp_config/layout').set(cfg.layout);
+    showToast('✅ บันทึกการจัดวางสำเร็จ!');
+  } catch(e){ showToast('❌ บันทึกไม่สำเร็จ',true); }
+}
 
 // ═══════════════════════════════════════
 //  EMOJI PICKER DATA
