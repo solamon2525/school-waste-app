@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>แอปเก็บขยะโรงเรียน</title>
+<title>โครงการธนาคารขยะ</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -78,7 +78,7 @@ th{background:#f9fafb;font-weight:700;color:#374151}
   <div class="login-box">
     <div style="text-align:center;margin-bottom:24px">
       <div style="font-size:48px">♻️</div>
-      <h1 style="font-size:22px;font-weight:800;color:#15803d;margin-top:8px">แอปเก็บขยะโรงเรียน</h1>
+      <h1 style="font-size:22px;font-weight:800;color:#15803d;margin-top:8px">โครงการธนาคารขยะ</h1>
       <p style="color:#6b7280;font-size:13px;margin-top:4px">กรุณาเข้าสู่ระบบ</p>
     </div>
     <div class="form-row"><label>อีเมล</label><input type="email" id="login-email" placeholder="teacher@school.com"/></div>
@@ -96,7 +96,7 @@ th{background:#f9fafb;font-weight:700;color:#374151}
 <div class="header">
   <div class="header-inner">
     <div>
-      <div style="font-size:18px;font-weight:800">♻️ เก็บขยะโรงเรียน</div>
+      <div style="font-size:18px;font-weight:800">♻️ โครงการธนาคารขยะ</div>
       <div id="header-sub" style="font-size:11px;opacity:.8">กำลังเชื่อมต่อ...</div>
     </div>
     <div class="flex gap8 ai-center">
@@ -613,7 +613,7 @@ function renderTeachers(){const el=document.getElementById('teachers-list');if(!
 
 // ── Line / Audit ──
 async function saveLineConfig(){const url=document.getElementById('n8n-url').value.trim(),token=document.getElementById('line-token').value.trim();await db.ref('config/line').set({n8nUrl:url,token});lineConfig={n8nUrl:url,token};showToast('บันทึกแล้ว ✅');}
-async function testLine(){await sendLine('🧪 ทดสอบ Line Notify\n♻️ แอปเก็บขยะโรงเรียน');}
+async function testLine(){await sendLine('🧪 ทดสอบ Line Notify\n♻️ โครงการธนาคารขยะ');}
 async function sendLine(msg){if(!lineConfig.n8nUrl||!lineConfig.token)return;try{await fetch(lineConfig.n8nUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:lineConfig.token,message:msg})});}catch(e){}}
 async function writeAudit(action,detail){await db.ref('audit').push({action,detail,by:currentName,ts:Date.now(),date:new Date().toISOString()});}
 function renderAudit(){const el=document.getElementById('audit-log');if(!el)return;if(!auditLogs.length){el.innerHTML='<p style="color:#9ca3af;font-size:13px">ยังไม่มีประวัติ</p>';return;}el.innerHTML=`<div class="tbl-wrap"><table><thead><tr><th>วันที่</th><th>การกระทำ</th><th>รายละเอียด</th><th>โดย</th></tr></thead><tbody>`+auditLogs.slice(0,50).map(l=>`<tr><td style="white-space:nowrap">${fmtDT(l.date)}</td><td>${l.action}</td><td>${l.detail}</td><td>${l.by}</td></tr>`).join('')+`</tbody></table></div>`;}
