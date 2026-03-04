@@ -165,6 +165,27 @@ body{font-family:Sarabun,sans-serif;min-height:100vh;overflow-x:hidden;backgroun
 .btn-outline{background:transparent;border:1px solid rgba(255,255,255,.15);color:#94a3b8}
 .btn-outline:hover{background:rgba(255,255,255,.06)}
 
+/* edit app button in drag list */
+.drag-edit-btn{flex-shrink:0;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);color:#4ade80;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:Sarabun,sans-serif;transition:all .2s}
+.drag-edit-btn:hover{background:rgba(74,222,128,.22)}
+
+/* emoji picker */
+.emoji-picker-wrap{margin-top:10px}
+.emoji-picker-wrap label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:8px}
+.emoji-current{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.emoji-current-icon{font-size:44px;width:60px;height:60px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.emoji-current-hint{font-size:12px;color:var(--muted);line-height:1.5}
+.emoji-input-row{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+.emoji-input-row input{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:9px 14px;color:var(--text);font-size:22px;font-family:Sarabun,sans-serif;outline:none;text-align:center;transition:border-color .2s}
+.emoji-input-row input:focus{border-color:rgba(74,222,128,.4)}
+.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;max-height:160px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#334155 transparent}
+.emoji-btn{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;font-size:20px;padding:6px;cursor:pointer;transition:all .15s;text-align:center;line-height:1}
+.emoji-btn:hover{background:rgba(74,222,128,.15);border-color:rgba(74,222,128,.3);transform:scale(1.15)}
+.emoji-btn.selected{background:rgba(74,222,128,.2);border-color:#4ade80}
+.emoji-cats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.emoji-cat{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:4px 10px;font-size:12px;color:var(--muted);cursor:pointer;transition:all .2s;font-family:Sarabun,sans-serif}
+.emoji-cat.active{background:rgba(74,222,128,.15);color:#4ade80;border-color:rgba(74,222,128,.3)}
+
 /* toast */
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(60px);background:rgba(22,163,74,.92);color:#fff;padding:10px 22px;border-radius:20px;font-size:13px;font-weight:700;z-index:999;transition:transform .3s;backdrop-filter:blur(10px);white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
@@ -280,13 +301,52 @@ body{font-family:Sarabun,sans-serif;min-height:100vh;overflow-x:hidden;backgroun
 
     <!-- TAB: APPS (drag & drop) -->
     <div class="admin-sec" id="tab-apps">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">ลากเพื่อเรียงลำดับ • toggle เพื่อซ่อน/แสดง</p>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">⠿ ลากเรียงลำดับ &nbsp;|&nbsp; ✏️ แก้ชื่อ/ไอคอน &nbsp;|&nbsp; toggle ซ่อน/แสดง</p>
       <div class="drag-list" id="drag-list"></div>
       <div class="save-row">
         <button class="btn btn-green" onclick="saveApps()" style="flex:1">💾 บันทึกลำดับแอป</button>
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- ════════════════ EDIT APP MODAL ════════════════ -->
+<div class="modal-bg" id="edit-app-modal">
+  <div class="modal" style="max-width:420px">
+    <button class="modal-close" onclick="closeModal('edit-app-modal')">✕</button>
+    <h2>✏️ แก้ไขแอป</h2>
+
+    <!-- ไอคอน -->
+    <div class="emoji-picker-wrap">
+      <label>ไอคอน Emoji</label>
+      <div class="emoji-current">
+        <div class="emoji-current-icon" id="edit-icon-preview">❓</div>
+        <div class="emoji-current-hint">พิมพ์ emoji ในช่องด้านล่าง<br>หรือเลือกจากรายการ</div>
+      </div>
+      <div class="emoji-input-row">
+        <input id="edit-icon-input" maxlength="4" placeholder="🏫" oninput="onEmojiInput(this.value)"/>
+        <button class="btn btn-outline" style="width:auto;padding:9px 14px;margin-top:0;font-size:13px" onclick="document.getElementById('edit-icon-input').value='';onEmojiInput('')">ล้าง</button>
+      </div>
+      <div class="emoji-cats" id="emoji-cats"></div>
+      <div class="emoji-grid" id="emoji-grid"></div>
+    </div>
+
+    <!-- ชื่อ -->
+    <div class="field-row" style="margin-top:16px">
+      <label>ชื่อแอป</label>
+      <input id="edit-app-name" placeholder="ชื่อแอป..."/>
+    </div>
+    <!-- คำอธิบาย -->
+    <div class="field-row">
+      <label>คำอธิบาย</label>
+      <input id="edit-app-desc" placeholder="คำอธิบายสั้นๆ..."/>
+    </div>
+
+    <div class="save-row">
+      <button class="btn btn-outline" onclick="closeModal('edit-app-modal')" style="flex:1">ยกเลิก</button>
+      <button class="btn btn-green" onclick="saveEditApp()" style="flex:2">💾 บันทึก</button>
+    </div>
   </div>
 </div>
 
@@ -617,22 +677,21 @@ function buildDragList(apps){
     item.dataset.id=a.id;
     item.innerHTML=`
       <span class="drag-handle">⠿</span>
-      <span class="drag-icon">${a.icon}</span>
+      <span class="drag-icon" id="dicon-${a.id}">${a.icon}</span>
       <div class="drag-info">
-        <div class="drag-title">${a.name}</div>
+        <div class="drag-title" id="dtitle-${a.id}">${a.name}</div>
         <div class="drag-sub">${a.live?'🟢 พร้อมใช้งาน':'🔜 เร็วๆ นี้'}</div>
       </div>
+      <button class="drag-edit-btn" onclick="openEditApp('${a.id}')">✏️ แก้ไข</button>
       <label class="toggle drag-toggle">
         <input type="checkbox" ${a.visible?'checked':''} onchange="toggleApp('${a.id}',this.checked)"/>
         <span class="toggle-slider"></span>
       </label>`;
-    // drag events
     item.addEventListener('dragstart', e=>{ dragSrc=item; item.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
     item.addEventListener('dragend',   ()=>{ item.classList.remove('dragging'); document.querySelectorAll('.drag-item').forEach(x=>x.classList.remove('drag-over')); });
     item.addEventListener('dragover',  e=>{ e.preventDefault(); e.dataTransfer.dropEffect='move'; item.classList.add('drag-over'); });
     item.addEventListener('dragleave', ()=>item.classList.remove('drag-over'));
     item.addEventListener('drop', e=>{ e.preventDefault(); if(dragSrc&&dragSrc!==item){ const allItems=[...list.children]; const si=allItems.indexOf(dragSrc),di=allItems.indexOf(item); if(si<di) item.after(dragSrc); else item.before(dragSrc); } item.classList.remove('drag-over'); });
-    // touch drag support
     addTouchDrag(item, list);
     list.appendChild(item);
   });
@@ -695,6 +754,86 @@ function addTouchDrag(item, list){
 document.querySelectorAll('.modal-bg').forEach(bg=>{
   bg.addEventListener('click', e=>{ if(e.target===bg) bg.classList.remove('open'); });
 });
+
+// ═══════════════════════════════════════
+//  EMOJI PICKER DATA
+// ═══════════════════════════════════════
+const EMOJI_CATS = {
+  '🏫 โรงเรียน': ['🏫','📚','✏️','📝','📖','🎒','🖊️','📐','📏','🔬','🔭','🧪','🧫','🧬','📊','📈','📉','🗂️','📋','📌','📍','🗓️','🏆','🥇','🎖️','🌟','⭐','💡','🔑','🔓'],
+  '🍱 อาหาร':    ['🍱','🍚','🍜','🍝','🍛','🥘','🍲','🥗','🥪','🥙','🌮','🌯','🍔','🍕','🍦','🎂','🍰','🧁','🍩','🍪','🧃','🥤','🍵','☕','🥛','🍶'],
+  '🏃 กีฬา':     ['🏃','⚽','🏀','🏐','🎾','🏸','🏓','⛳','🎱','🏊','🤸','🤼','🥊','🏋️','🚴','🛹','🏄','🤺','🥋','🎯','🎽','🥅','🏅'],
+  '🌱 ธรรมชาติ':  ['🌱','🌿','🍃','🌲','🌳','🌴','🌸','🌺','🌻','🌹','🍀','🌾','🍂','🍁','🌍','🌊','⛰️','🏔️','🌈','☀️','🌤️','🌙','⭐','❄️','🔥','💧'],
+  '❤️ ทั่วไป':   ['❤️','🧡','💛','💚','💙','💜','🖤','🤍','💕','💖','💗','💘','😊','😃','🥳','🎉','🎊','🎈','🎁','🏠','🏡','🔔','📢','📣','💬','✅','⚠️','ℹ️','🔒','🔐','⚙️','🛠️'],
+};
+
+let currentEditId = null;
+let currentEmojiCat = Object.keys(EMOJI_CATS)[0];
+let selectedEmoji = '';
+
+function initEmojiPicker(){
+  // categories
+  const catWrap = document.getElementById('emoji-cats');
+  catWrap.innerHTML='';
+  Object.keys(EMOJI_CATS).forEach(cat=>{
+    const btn=document.createElement('button');
+    btn.className='emoji-cat'+(cat===currentEmojiCat?' active':'');
+    btn.textContent=cat;
+    btn.onclick=()=>{ currentEmojiCat=cat; initEmojiPicker(); };
+    catWrap.appendChild(btn);
+  });
+  // grid
+  const grid=document.getElementById('emoji-grid');
+  grid.innerHTML='';
+  EMOJI_CATS[currentEmojiCat].forEach(em=>{
+    const btn=document.createElement('button');
+    btn.className='emoji-btn'+(em===selectedEmoji?' selected':'');
+    btn.textContent=em;
+    btn.title=em;
+    btn.onclick=()=>{ selectedEmoji=em; document.getElementById('edit-icon-input').value=em; document.getElementById('edit-icon-preview').textContent=em; initEmojiPicker(); };
+    grid.appendChild(btn);
+  });
+}
+
+function onEmojiInput(val){
+  // take first emoji-like char
+  const em = [...val][0]||'';
+  selectedEmoji=em;
+  document.getElementById('edit-icon-preview').textContent=em||'❓';
+  initEmojiPicker();
+}
+
+function openEditApp(id){
+  currentEditId=id;
+  const a=cfg.apps.find(x=>x.id===id);
+  if(!a) return;
+  selectedEmoji=a.icon;
+  document.getElementById('edit-icon-preview').textContent=a.icon;
+  document.getElementById('edit-icon-input').value=a.icon;
+  document.getElementById('edit-app-name').value=a.name;
+  document.getElementById('edit-app-desc').value=a.desc;
+  initEmojiPicker();
+  openModal('edit-app-modal');
+}
+
+async function saveEditApp(){
+  const a=cfg.apps.find(x=>x.id===currentEditId);
+  if(!a) return;
+  const newIcon = selectedEmoji || a.icon;
+  const newName = document.getElementById('edit-app-name').value.trim() || a.name;
+  const newDesc = document.getElementById('edit-app-desc').value.trim() || a.desc;
+  a.icon=newIcon; a.name=newName; a.desc=newDesc;
+  // update drag list labels in real-time
+  const di=document.getElementById('dicon-'+currentEditId);
+  const dt=document.getElementById('dtitle-'+currentEditId);
+  if(di) di.textContent=newIcon;
+  if(dt) dt.textContent=newName;
+  try{
+    await db.ref('superapp_config/apps').set(cfg.apps);
+    renderApps(cfg.apps);
+    closeModal('edit-app-modal');
+    showToast('✅ แก้ไขแอปสำเร็จ!');
+  } catch(e){ showToast('❌ บันทึกไม่สำเร็จ',true); }
+}
 </script>
 </body>
 </html>
