@@ -538,7 +538,6 @@ async function saveMember(){
   const data={type:'student',name,room,img:mImgB64||'',points:0};
   if(editMemberId){
     await db.ref(`members/${editMemberId}`).update({name,room,img:mImgB64||''});
-    // อัปเดตชื่อ/ห้องใน records ที่ผูกไว้ด้วย
     const linked=records.filter(r=>r.member_id===editMemberId);
     if(linked.length){
       const updates={};
@@ -654,7 +653,6 @@ async function fixMemberRoom(fbKey, name){
   const room=document.getElementById(`fix-room-${fbKey}`)?.value;
   if(!room){showToast('กรุณาเลือกห้อง','error');return;}
   await db.ref(`members/${fbKey}`).update({room});
-  // อัปเดตห้องใน records ที่ผูกไว้ด้วย
   const linked=records.filter(r=>r.member_id===fbKey);
   if(linked.length){
     const updates={};
@@ -667,14 +665,12 @@ async function fixMemberRoom(fbKey, name){
 }
 function scanOrphanRecords(){
   const memberIds=new Set(members.map(m=>m.fbKey));
-  // records ที่มี member_id แต่ไม่มีใน members แล้ว
   const orphans=records.filter(r=>r.member_id && !memberIds.has(r.member_id));
   const el=document.getElementById('orphan-result');
   if(!orphans.length){
     el.innerHTML='<div style="background:#f0fdf4;border-radius:8px;padding:12px;color:#16a34a;font-size:14px;font-weight:600">✅ ไม่พบข้อมูลที่มีปัญหา ทุกอย่างปกติ</div>';
     return;
   }
-  // จัดกลุ่มตาม member_id เพื่อนับจำนวน
   const grouped={};
   orphans.forEach(r=>{
     if(!grouped[r.member_id]) grouped[r.member_id]={name:r.member_name||'ไม่ระบุ',room:r.member_room||'-',records:[],totalPts:0};
@@ -726,7 +722,6 @@ async function remapOrphan(oldMid){
     totalPts+=r.total||0;
   });
   await db.ref().update(updates);
-  // อัปเดตแต้ม
   await db.ref(`members/${newMid}/points`).transaction(p=>(p||0)+totalPts);
   await writeAudit('remap_records',`ผูก ${toRemap.length} บันทึกของ "${toRemap[0].member_name}" → "${newMember.name}" (${newMember.room})`);
   showToast(`ผูกข้อมูล ${toRemap.length} รายการ → ${newMember.name} แล้ว ✅`);
@@ -756,6 +751,7 @@ async function deleteAllOrphans(){
   showToast(`ลบ ${orphans.length} รายการแล้ว ✅`);
   document.getElementById('orphan-result').innerHTML='<div style="background:#f0fdf4;border-radius:8px;padding:12px;color:#16a34a;font-size:14px;font-weight:600">✅ ล้างข้อมูลเรียบร้อยแล้ว</div>';
 }
+
 function downloadCSV(fn,rows){const BOM='\uFEFF',csv=BOM+rows.map(r=>r.map(c=>`"${String(c??'').replace(/"/g,'""')}"`).join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=fn;a.click();}
 function exportCSV(){if(!records.length){showToast('ยังไม่มีข้อมูล','error');return;}const h=['วันที่','เวลา','ชื่อ','ห้อง','ขวดพลาสติก','กระป๋อง','กระดาษ','อื่นๆ','รวม','แต้ม','หมายเหตุ','บันทึกโดย'];const rows=records.map(r=>{const d=new Date(r.date);return[d.toLocaleDateString('th-TH'),d.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}),r.member_name||'ไม่ระบุ',r.member_room||'-',r.plastic||0,r.can||0,r.paper||0,r.other||0,r.total||0,r.pts||0,r.note||'',r.created_name||''];});downloadCSV(`waste_${new Date().toISOString().slice(0,10)}.csv`,[h,...rows]);showToast('Export สำเร็จ ✅');}
 function exportSummaryCSV(){if(!records.length){showToast('ยังไม่มีข้อมูล','error');return;}const h=['ชื่อ','ห้อง','ครั้ง','ขวด','กระป๋อง','กระดาษ','อื่นๆ','รวม','แต้ม'];const rows=members.map(m=>{const recs=records.filter(r=>r.member_id===m.fbKey);return[m.name,m.room||'-',recs.length,recs.reduce((s,r)=>s+(r.plastic||0),0),recs.reduce((s,r)=>s+(r.can||0),0),recs.reduce((s,r)=>s+(r.paper||0),0),recs.reduce((s,r)=>s+(r.other||0),0),recs.reduce((s,r)=>s+(r.total||0),0),m.points||0];}).sort((a,b)=>b[7]-a[7]);downloadCSV(`summary_${new Date().toISOString().slice(0,10)}.csv`,[h,...rows]);showToast('Export สรุปสำเร็จ ✅');}
@@ -765,8 +761,33 @@ function switchTab(t){['log','history','dashboard','points','qr','admin'].forEac
 function initDatetime(){const now=new Date(),pad=n=>String(n).padStart(2,'0');document.getElementById('form-date').value=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;}
 let _tt;
 function showToast(msg,type='success'){const el=document.getElementById('toast');el.textContent=msg;el.style.background=type==='error'?'#ef4444':'#16a34a';el.classList.remove('hidden');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.add('hidden'),3000);}
-const fmtDT=d=>new Date(d).toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'});
-const fmtD=d=>new Date(d).toLocaleDateString('th-TH',{weekday:'short',day:'numeric',month:'short'});
+
+// ── ฟังก์ชันแสดงวันที่ภาษาไทย (แก้ไขใหม่) ──
+const WEEKDAYS=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+const MONTHS=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+
+const fmtDT=d=>{
+  if(!d) return '-';
+  const dt=new Date(d);
+  if(isNaN(dt)) return '-';
+  const wd=WEEKDAYS[dt.getDay()];
+  const day=dt.getDate();
+  const mon=MONTHS[dt.getMonth()];
+  const yr=dt.getFullYear()+543;
+  const hh=String(dt.getHours()).padStart(2,'0');
+  const mm=String(dt.getMinutes()).padStart(2,'0');
+  return `วัน${wd}ที่ ${day} เดือน${mon} ปี พ.ศ. ${yr} เวลา ${hh}:${mm} น.`;
+};
+
+const fmtD=d=>{
+  if(!d) return '-';
+  const dt=new Date(d);
+  if(isNaN(dt)) return '-';
+  const wd=WEEKDAYS[dt.getDay()];
+  const day=dt.getDate();
+  const mon=MONTHS[dt.getMonth()];
+  return `${wd} ${day} ${mon}`;
+};
 </script>
 </body>
 </html>
