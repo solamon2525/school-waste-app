@@ -3,279 +3,698 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>🏫 Super App โรงเรียน</title>
+<title>Super App บ้านคำไผ่</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--green:#16a34a;--green-light:#4ade80;--blue:#3b82f6;--yellow:#fbbf24;--purple:#a855f7;--pink:#ec4899;--orange:#f97316}
-body{font-family:Sarabun,sans-serif;min-height:100vh;overflow-x:hidden;background:#0d1117}
+:root{
+  --green:#16a34a;--green-light:#4ade80;--blue:#3b82f6;
+  --yellow:#fbbf24;--purple:#a855f7;--orange:#f97316;
+  --bg:#0d1117;--surface:rgba(255,255,255,.05);--border:rgba(255,255,255,.1);
+  --text:#f1f5f9;--muted:#64748b;--accent:#4ade80;
+}
+body{font-family:Sarabun,sans-serif;min-height:100vh;overflow-x:hidden;background:var(--bg);color:var(--text)}
 
-/* ── Animated BG ── */
-.bg{position:fixed;inset:0;z-index:0;background:linear-gradient(160deg,#0d1117 0%,#0f2027 40%,#1a1a2e 100%)}
-.bg-glow{position:fixed;inset:0;z-index:0;pointer-events:none}
-.glow{position:absolute;border-radius:50%;filter:blur(80px);opacity:.18;animation:glowMove 8s ease-in-out infinite}
-.glow1{width:500px;height:500px;background:#16a34a;top:-100px;left:-100px;animation-delay:0s}
-.glow2{width:400px;height:400px;background:#3b82f6;bottom:-80px;right:-80px;animation-delay:3s}
-.glow3{width:300px;height:300px;background:#f97316;top:40%;left:40%;animation-delay:5s}
-@keyframes glowMove{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(30px,-20px) scale(1.1)}}
+/* ─── BG ─── */
+.bg-layer{position:fixed;inset:0;z-index:0;background:linear-gradient(160deg,#0d1117 0%,#0f2027 40%,#1a1a2e 100%);pointer-events:none}
+.glow-wrap{position:fixed;inset:0;z-index:0;pointer-events:none}
+.glow{position:absolute;border-radius:50%;filter:blur(90px);opacity:.15;animation:gMove 9s ease-in-out infinite}
+.g1{width:520px;height:520px;background:#16a34a;top:-120px;left:-120px}
+.g2{width:420px;height:420px;background:#3b82f6;bottom:-100px;right:-100px;animation-delay:3s}
+.g3{width:320px;height:320px;background:#f97316;top:45%;left:42%;animation-delay:5.5s}
+@keyframes gMove{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(28px,-18px) scale(1.1)}}
 
-/* ── Particles ── */
-.particles{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.p{position:absolute;font-size:20px;animation:pfloat linear infinite;opacity:0}
-@keyframes pfloat{0%{transform:translateY(110vh) rotate(0deg);opacity:0}10%{opacity:.6}90%{opacity:.5}100%{transform:translateY(-80px) rotate(360deg);opacity:0}}
+/* particles */
+.ptcl{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.pt{position:absolute;animation:ptFloat linear infinite;opacity:0}
+@keyframes ptFloat{0%{transform:translateY(110vh) rotate(0deg);opacity:0}10%{opacity:.5}90%{opacity:.4}100%{transform:translateY(-80px) rotate(360deg);opacity:0}}
 
-/* ── Layout ── */
-.wrap{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:20px 16px 40px}
+/* ─── WRAP ─── */
+.wrap{position:relative;z-index:1;max-width:700px;margin:0 auto;padding:20px 16px 60px}
 
-/* ── Header ── */
-.hero{text-align:center;padding:32px 16px 28px}
-.school-logo{width:90px;height:90px;border-radius:24px;background:linear-gradient(135deg,#16a34a,#15803d);display:flex;align-items:center;justify-content:center;font-size:46px;margin:0 auto 16px;box-shadow:0 8px 32px rgba(22,163,74,.4);animation:logoBounce 3s ease-in-out infinite}
-@keyframes logoBounce{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
-.school-name{font-size:26px;font-weight:900;background:linear-gradient(135deg,#4ade80,#86efac,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;margin-bottom:6px}
-.school-sub{color:#64748b;font-size:14px}
-.greeting{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:6px 16px;margin-top:12px;font-size:13px;color:#94a3b8}
-.greeting-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:blink 1.5s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+/* ─── HERO ─── */
+.hero{text-align:center;padding:32px 16px 24px}
+.logo-box{width:96px;height:96px;border-radius:26px;background:linear-gradient(135deg,#16a34a,#15803d);display:flex;align-items:center;justify-content:center;font-size:48px;margin:0 auto 16px;box-shadow:0 8px 36px rgba(22,163,74,.4);animation:lBounce 3.2s ease-in-out infinite;overflow:hidden;flex-shrink:0}
+@keyframes lBounce{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+.logo-box img{width:100%;height:100%;object-fit:cover;border-radius:24px}
+.school-name{font-size:27px;font-weight:900;background:linear-gradient(135deg,#4ade80,#86efac,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;margin-bottom:6px}
+.school-sub{color:var(--muted);font-size:14px}
+.greeting{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:6px 18px;margin-top:12px;font-size:13px;color:#94a3b8}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 
-/* ── Quick stats bar ── */
-.stats-bar{display:flex;gap:10px;margin-bottom:24px;overflow-x:auto;padding-bottom:4px}
-.stat-chip{flex-shrink:0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px 16px;text-align:center;min-width:100px;backdrop-filter:blur(10px)}
-.stat-chip-num{font-size:22px;font-weight:800;background:linear-gradient(135deg,#4ade80,#86efac);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.stat-chip-label{font-size:11px;color:#64748b;margin-top:2px}
+/* ─── STATS ─── */
+.stats-bar{display:flex;gap:10px;margin-bottom:24px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.stats-bar::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 16px;text-align:center;min-width:108px;backdrop-filter:blur(10px)}
+.chip-num{font-size:22px;font-weight:800;background:linear-gradient(135deg,#4ade80,#86efac);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.chip-lbl{font-size:11px;color:var(--muted);margin-top:2px}
 
-/* ── Section ── */
-.section-title{font-size:13px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;margin:20px 0 12px;display:flex;align-items:center;gap:6px}
-.section-title::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.06)}
+/* ─── SECTION TITLE ─── */
+.sec-title{font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1.2px;margin:22px 0 12px;display:flex;align-items:center;gap:8px}
+.sec-title::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.06)}
 
-/* ── App Cards ── */
+/* ─── APP GRID ─── */
 .apps-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
-.app-card{border-radius:20px;padding:20px 16px 16px;cursor:pointer;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden;text-decoration:none;display:block}
-.app-card:hover{transform:translateY(-4px)}
-.app-card::before{content:'';position:absolute;inset:0;border-radius:20px;padding:1.5px;background:var(--card-border);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
-
-/* App card themes */
-.card-green{background:linear-gradient(135deg,rgba(22,163,74,.25),rgba(16,128,58,.12));--card-border:linear-gradient(135deg,rgba(74,222,128,.5),rgba(22,163,74,.2))}
-.card-blue{background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(37,99,235,.1));--card-border:linear-gradient(135deg,rgba(96,165,250,.5),rgba(59,130,246,.2))}
-.card-yellow{background:linear-gradient(135deg,rgba(251,191,36,.2),rgba(245,158,11,.1));--card-border:linear-gradient(135deg,rgba(252,211,77,.5),rgba(251,191,36,.2))}
-.card-purple{background:linear-gradient(135deg,rgba(168,85,247,.2),rgba(126,34,206,.1));--card-border:linear-gradient(135deg,rgba(192,132,252,.5),rgba(168,85,247,.2))}
-.card-pink{background:linear-gradient(135deg,rgba(236,72,153,.2),rgba(190,24,93,.1));--card-border:linear-gradient(135deg,rgba(244,114,182,.5),rgba(236,72,153,.2))}
-.card-orange{background:linear-gradient(135deg,rgba(249,115,22,.2),rgba(194,65,12,.1));--card-border:linear-gradient(135deg,rgba(251,146,60,.5),rgba(249,115,22,.2))}
-.card-coming{background:rgba(255,255,255,.03);--card-border:linear-gradient(135deg,rgba(255,255,255,.1),rgba(255,255,255,.05));cursor:default;opacity:.6}
-.card-coming:hover{transform:none}
-
-.app-icon{font-size:38px;display:block;margin-bottom:12px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.3));transition:transform .2s}
+.app-card{border-radius:20px;padding:20px 16px 16px;cursor:pointer;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden;text-decoration:none;display:block;outline:none}
+.app-card:hover{transform:translateY(-5px)}
+.app-card::before{content:'';position:absolute;inset:0;border-radius:20px;padding:1.5px;background:var(--cb);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.cg{background:linear-gradient(135deg,rgba(22,163,74,.25),rgba(16,128,58,.12));--cb:linear-gradient(135deg,rgba(74,222,128,.5),rgba(22,163,74,.2))}
+.cb{background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(37,99,235,.1));--cb:linear-gradient(135deg,rgba(96,165,250,.5),rgba(59,130,246,.2))}
+.cy{background:linear-gradient(135deg,rgba(251,191,36,.2),rgba(245,158,11,.1));--cb:linear-gradient(135deg,rgba(252,211,77,.5),rgba(251,191,36,.2))}
+.cp{background:linear-gradient(135deg,rgba(168,85,247,.2),rgba(126,34,206,.1));--cb:linear-gradient(135deg,rgba(192,132,252,.5),rgba(168,85,247,.2))}
+.co{background:linear-gradient(135deg,rgba(249,115,22,.2),rgba(194,65,12,.1));--cb:linear-gradient(135deg,rgba(251,146,60,.5),rgba(249,115,22,.2))}
+.cc{background:rgba(255,255,255,.03);--cb:linear-gradient(135deg,rgba(255,255,255,.1),rgba(255,255,255,.04));cursor:default;opacity:.55}
+.cc:hover{transform:none}
+.app-icon{font-size:38px;display:block;margin-bottom:12px;transition:transform .2s;filter:drop-shadow(0 4px 8px rgba(0,0,0,.3))}
 .app-card:hover .app-icon{transform:scale(1.15) rotate(-5deg)}
-.app-name{font-size:15px;font-weight:800;color:#f1f5f9;margin-bottom:4px}
-.app-desc{font-size:12px;color:#64748b;line-height:1.4}
-.app-badge{position:absolute;top:12px;right:12px;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.app-name{font-size:15px;font-weight:800;color:var(--text);margin-bottom:4px}
+.app-desc{font-size:12px;color:var(--muted);line-height:1.4}
+.badge{position:absolute;top:12px;right:12px;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700}
 .badge-live{background:rgba(22,163,74,.2);color:#4ade80;border:1px solid rgba(74,222,128,.3)}
-.badge-soon{background:rgba(255,255,255,.08);color:#64748b;border:1px solid rgba(255,255,255,.1)}
-.app-arrow{position:absolute;bottom:14px;right:14px;color:#374151;font-size:16px;transition:transform .2s,color .2s}
-.app-card:not(.card-coming):hover .app-arrow{transform:translateX(3px);color:#4ade80}
+.badge-soon{background:rgba(255,255,255,.07);color:#64748b;border:1px solid rgba(255,255,255,.1)}
+.arr{position:absolute;bottom:14px;right:14px;color:#374151;font-size:16px;transition:transform .2s,color .2s}
+.app-card:not(.cc):hover .arr{transform:translateX(3px);color:var(--accent)}
+.wide{grid-column:1/-1;display:flex;gap:16px;align-items:center;padding:18px 20px}
+.wide .app-icon{font-size:44px;margin:0;flex-shrink:0}
+.wide .app-text{flex:1}
+.wide .app-name{font-size:17px}
+.wide .app-desc{font-size:13px}
+.wide .arr{position:static;margin-left:auto}
 
-/* ── Full-width card ── */
-.app-card-wide{grid-column:1/-1;display:flex;gap:16px;align-items:center;padding:18px 20px}
-.app-card-wide .app-icon{font-size:44px;margin:0;flex-shrink:0}
-.app-card-wide .app-text{flex:1}
-.app-card-wide .app-name{font-size:17px}
-.app-card-wide .app-desc{font-size:13px}
-.app-card-wide .app-arrow{position:static;margin-left:auto}
+/* ─── NOTICE ─── */
+.notice{background:linear-gradient(135deg,rgba(251,191,36,.1),rgba(245,158,11,.05));border:1px solid rgba(251,191,36,.22);border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;margin-bottom:20px}
+.notice-ico{font-size:20px;flex-shrink:0}
+.notice-txt{font-size:13px;color:#d4a017;line-height:1.5}
 
-/* ── Notice banner ── */
-.notice{background:linear-gradient(135deg,rgba(251,191,36,.12),rgba(245,158,11,.06));border:1px solid rgba(251,191,36,.25);border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;margin-bottom:16px}
-.notice-icon{font-size:22px;flex-shrink:0}
-.notice-text{font-size:13px;color:#d4a017;line-height:1.5}
+.footer{text-align:center;color:#2d3748;font-size:12px;padding-top:12px}
 
-/* ── Footer ── */
-.footer{text-align:center;padding:24px 0 8px;color:#2d3748;font-size:12px}
+/* ─── ADMIN FLOATING BTN ─── */
+.admin-fab{position:fixed;bottom:24px;right:20px;z-index:100;background:rgba(22,163,74,.15);border:1px solid rgba(74,222,128,.3);color:#4ade80;border-radius:50px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;backdrop-filter:blur(12px);transition:all .2s;font-family:Sarabun,sans-serif;display:flex;align-items:center;gap:7px}
+.admin-fab:hover{background:rgba(22,163,74,.3);transform:translateY(-2px)}
+.admin-fab-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:blink 1.5s infinite}
 
-/* ── Responsive ── */
-@media(max-width:400px){
+/* ─── MODAL BASE ─── */
+.modal-bg{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .25s}
+.modal-bg.open{opacity:1;pointer-events:all}
+.modal{background:#141b27;border:1px solid rgba(255,255,255,.12);border-radius:24px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;padding:28px 24px;position:relative;transform:translateY(30px);transition:transform .25s;scrollbar-width:thin;scrollbar-color:#334155 transparent}
+.modal-bg.open .modal{transform:translateY(0)}
+.modal h2{font-size:20px;font-weight:800;margin-bottom:20px;background:linear-gradient(135deg,#4ade80,#86efac);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.modal-close{position:absolute;top:18px;right:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:#94a3b8;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-close:hover{background:rgba(255,255,255,.15);color:#fff}
+
+/* ─── LOGIN FORM ─── */
+.form-group{margin-bottom:16px}
+.form-label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;display:block}
+.form-input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px 16px;color:var(--text);font-size:15px;font-family:Sarabun,sans-serif;outline:none;transition:border-color .2s}
+.form-input:focus{border-color:rgba(74,222,128,.5)}
+.btn{width:100%;padding:13px;border-radius:14px;border:none;font-size:15px;font-weight:800;cursor:pointer;font-family:Sarabun,sans-serif;transition:all .2s;margin-top:4px}
+.btn-green{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;box-shadow:0 4px 20px rgba(22,163,74,.3)}
+.btn-green:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(22,163,74,.4)}
+.btn-green:disabled{opacity:.5;cursor:default;transform:none}
+.btn-red{background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff}
+.btn-red:hover{transform:translateY(-2px)}
+.err-msg{color:#f87171;font-size:13px;margin-top:8px;text-align:center;min-height:20px}
+
+/* ─── ADMIN PANEL ─── */
+.admin-modal{max-width:600px}
+.tab-bar{display:flex;gap:6px;margin-bottom:20px;background:rgba(255,255,255,.04);border-radius:14px;padding:4px}
+.tab{flex:1;padding:9px;text-align:center;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);transition:all .2s}
+.tab.active{background:rgba(74,222,128,.15);color:#4ade80;border:1px solid rgba(74,222,128,.25)}
+
+/* admin sections */
+.admin-sec{display:none}
+.admin-sec.active{display:block}
+
+/* logo upload */
+.logo-upload-area{border:2px dashed rgba(255,255,255,.15);border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative}
+.logo-upload-area:hover{border-color:rgba(74,222,128,.4)}
+.logo-preview{width:80px;height:80px;border-radius:20px;object-fit:cover;margin:0 auto 10px;display:block;background:linear-gradient(135deg,#16a34a,#15803d)}
+.logo-preview-emoji{font-size:40px;line-height:80px;display:block;text-align:center}
+.upload-hint{font-size:12px;color:var(--muted);margin-top:6px}
+#admin-logo-input{display:none}
+
+/* text editor */
+.field-row{margin-bottom:14px}
+.field-row label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:6px}
+.field-row input,.field-row textarea{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;font-family:Sarabun,sans-serif;outline:none;transition:border-color .2s;resize:vertical}
+.field-row input:focus,.field-row textarea:focus{border-color:rgba(74,222,128,.4)}
+
+/* drag & drop list */
+.drag-list{display:flex;flex-direction:column;gap:8px;min-height:40px}
+.drag-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:grab;transition:all .2s;user-select:none}
+.drag-item:active{cursor:grabbing}
+.drag-item.dragging{opacity:.4;border-style:dashed}
+.drag-item.drag-over{border-color:#4ade80;background:rgba(74,222,128,.08)}
+.drag-handle{color:#374151;font-size:18px;flex-shrink:0;cursor:grab}
+.drag-icon{font-size:26px;flex-shrink:0}
+.drag-info{flex:1}
+.drag-title{font-size:14px;font-weight:700;color:var(--text)}
+.drag-sub{font-size:11px;color:var(--muted)}
+.drag-toggle{flex-shrink:0}
+.toggle{position:relative;width:42px;height:24px}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:rgba(255,255,255,.1);border-radius:12px;transition:.3s;cursor:pointer}
+.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#64748b;border-radius:50%;transition:.3s}
+.toggle input:checked + .toggle-slider{background:rgba(74,222,128,.3)}
+.toggle input:checked + .toggle-slider::before{transform:translateX(18px);background:#4ade80}
+
+/* save btn */
+.save-row{display:flex;gap:10px;margin-top:20px}
+.save-row .btn{margin-top:0}
+.btn-outline{background:transparent;border:1px solid rgba(255,255,255,.15);color:#94a3b8}
+.btn-outline:hover{background:rgba(255,255,255,.06)}
+
+/* toast */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(60px);background:rgba(22,163,74,.92);color:#fff;padding:10px 22px;border-radius:20px;font-size:13px;font-weight:700;z-index:999;transition:transform .3s;backdrop-filter:blur(10px);white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.err{background:rgba(220,38,38,.92)}
+
+/* loading overlay */
+.loading{position:fixed;inset:0;z-index:300;background:rgba(13,17,23,.85);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;opacity:0;pointer-events:none;transition:opacity .3s}
+.loading.show{opacity:1;pointer-events:all}
+.spinner{width:44px;height:44px;border:3px solid rgba(255,255,255,.1);border-top-color:#4ade80;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:420px){
   .apps-grid{grid-template-columns:1fr}
-  .app-card-wide{grid-column:1}
+  .wide{grid-column:1}
   .school-name{font-size:22px}
 }
 </style>
 </head>
 <body>
-<div class="bg"></div>
-<div class="bg-glow"><div class="glow glow1"></div><div class="glow glow2"></div><div class="glow glow3"></div></div>
-<div class="particles" id="particles"></div>
+<div class="bg-layer"></div>
+<div class="glow-wrap"><div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div></div>
+<div class="ptcl" id="ptcl"></div>
+<div class="toast" id="toast"></div>
+<div class="loading" id="loading"><div class="spinner"></div><div style="font-size:13px;color:#64748b">กำลังโหลด...</div></div>
 
-<div class="wrap">
-
-  <!-- Hero -->
+<!-- ════════════════ MAIN APP ════════════════ -->
+<div class="wrap" id="app-wrap">
   <div class="hero">
-    <div class="school-logo">🏫</div>
-    <div class="school-name">Super App โรงเรียน</div>
-    <div class="school-sub">ระบบบริหารจัดการโรงเรียนออนไลน์</div>
-    <div class="greeting">
-      <span class="greeting-dot"></span>
-      <span id="greeting-text">สวัสดี! วันนี้มีกิจกรรมรออยู่นะ 😊</span>
-    </div>
+    <div class="logo-box" id="main-logo"><span id="main-logo-emoji">🏫</span></div>
+    <div class="school-name" id="main-school-name">Super App บ้านคำไผ่</div>
+    <div class="school-sub" id="main-school-sub">ระบบบริหารจัดการโรงเรียนออนไลน์</div>
+    <div class="greeting"><span class="dot"></span><span id="greeting-txt">สวัสดี!</span></div>
   </div>
 
-  <!-- Quick Stats (จาก Firebase แอปขยะ) -->
   <div class="stats-bar">
-    <div class="stat-chip">
-      <div class="stat-chip-num" id="qs-waste">...</div>
-      <div class="stat-chip-label">♻️ ขยะรวม (ชิ้น)</div>
-    </div>
-    <div class="stat-chip">
-      <div class="stat-chip-num" id="qs-members">...</div>
-      <div class="stat-chip-label">👤 นักเรียนในระบบ</div>
-    </div>
-    <div class="stat-chip">
-      <div class="stat-chip-num" id="qs-records">...</div>
-      <div class="stat-chip-label">📋 ครั้งที่บันทึก</div>
-    </div>
-    <div class="stat-chip">
-      <div class="stat-chip-num" id="qs-today">...</div>
-      <div class="stat-chip-label">📅 วันนี้ (ชิ้น)</div>
-    </div>
+    <div class="chip"><div class="chip-num" id="qs-waste">—</div><div class="chip-lbl">♻️ ขยะรวม (ชิ้น)</div></div>
+    <div class="chip"><div class="chip-num" id="qs-members">—</div><div class="chip-lbl">👤 นักเรียนในระบบ</div></div>
+    <div class="chip"><div class="chip-num" id="qs-records">—</div><div class="chip-lbl">📋 ครั้งที่บันทึก</div></div>
+    <div class="chip"><div class="chip-num" id="qs-today">—</div><div class="chip-lbl">📅 วันนี้ (ชิ้น)</div></div>
   </div>
 
-  <!-- แอปที่พร้อมใช้งาน -->
-  <div class="section-title">🟢 พร้อมใช้งาน</div>
-  <div class="apps-grid">
+  <div id="apps-render"></div>
 
-    <!-- แอปเก็บขยะ (ครู) — full width -->
-    <a href="waste/index.html" class="app-card card-green app-card-wide">
-      <span class="app-icon">♻️</span>
-      <div class="app-text">
-        <div class="app-name">แอปเก็บขยะโรงเรียน</div>
-        <div class="app-desc">บันทึกและติดตามการเก็บขยะ • ระบบคะแนน • Leaderboard • สำหรับครูและแอดมิน</div>
-      </div>
-      <span class="app-badge badge-live">● LIVE</span>
-      <span class="app-arrow">→</span>
-    </a>
-
-    <!-- หน้านักเรียน (public) -->
-    <a href="waste/public.html" class="app-card card-blue">
-      <span class="app-badge badge-live">● LIVE</span>
-      <span class="app-icon">🏆</span>
-      <div class="app-name">อันดับคะแนน</div>
-      <div class="app-desc">Leaderboard นักเรียน • ดูได้ทุกคน ไม่ต้อง Login</div>
-      <span class="app-arrow">→</span>
-    </a>
-
-    <!-- Dashboard สาธารณะ -->
-    <a href="waste/public.html" class="app-card card-yellow">
-      <span class="app-badge badge-live">● LIVE</span>
-      <span class="app-icon">📊</span>
-      <div class="app-name">สถิติโรงเรียน</div>
-      <div class="app-desc">ยอดขยะรวม • แยกห้องเรียน • 7 วันย้อนหลัง</div>
-      <span class="app-arrow">→</span>
-    </a>
-
-  </div>
-
-  <!-- แอปที่กำลังจะมา -->
-  <div class="section-title">🔜 เร็วๆ นี้</div>
-  <div class="apps-grid">
-
-    <div class="app-card card-coming">
-      <span class="app-badge badge-soon">เร็วๆ นี้</span>
-      <span class="app-icon">📚</span>
-      <div class="app-name">ห้องสมุด</div>
-      <div class="app-desc">ยืม-คืนหนังสือออนไลน์</div>
-    </div>
-
-    <div class="app-card card-coming">
-      <span class="app-badge badge-soon">เร็วๆ นี้</span>
-      <span class="app-icon">🍱</span>
-      <div class="app-name">อาหารกลางวัน</div>
-      <div class="app-desc">สั่งอาหาร • เมนูประจำวัน</div>
-    </div>
-
-    <div class="app-card card-coming">
-      <span class="app-badge badge-soon">เร็วๆ นี้</span>
-      <span class="app-icon">🏃</span>
-      <div class="app-name">ออกกำลังกาย</div>
-      <div class="app-desc">บันทึกกิจกรรมพลศึกษา</div>
-    </div>
-
-    <div class="app-card card-coming">
-      <span class="app-badge badge-soon">เร็วๆ นี้</span>
-      <span class="app-icon">📝</span>
-      <div class="app-name">เช็คชื่อ</div>
-      <div class="app-desc">เช็คชื่อนักเรียนออนไลน์</div>
-    </div>
-
-    <div class="app-card card-coming">
-      <span class="app-badge badge-soon">เร็วๆ นี้</span>
-      <span class="app-icon">🌱</span>
-      <div class="app-name">รดน้ำต้นไม้</div>
-      <div class="app-desc">ติดตามกิจกรรมสีเขียว</div>
-    </div>
-
-    <div class="app-card card-coming">
-      <span class="app-badge badge-soon">เร็วๆ นี้</span>
-      <span class="app-icon">⭐</span>
-      <div class="app-name">คะแนนความดี</div>
-      <div class="app-desc">ระบบ reward โรงเรียน</div>
-    </div>
-
-  </div>
-
-  <!-- Notice -->
   <div class="notice">
-    <div class="notice-icon">💡</div>
-    <div class="notice-text">
-      <b>เพิ่มแอปใหม่ได้ตลอด!</b> ติดต่อผู้พัฒนาเพื่อเพิ่มแอปที่ต้องการลงใน Super App นี้ได้เลยครับ
-    </div>
+    <div class="notice-ico">💡</div>
+    <div class="notice-txt" id="main-notice-txt"><b>เพิ่มแอปใหม่ได้ตลอด!</b> ติดต่อผู้พัฒนาเพื่อเพิ่มแอปที่ต้องการ</div>
   </div>
-
-  <div class="footer">Super App โรงเรียน • พัฒนาด้วย ❤️ เพื่อการศึกษา</div>
+  <div class="footer" id="main-footer">Super App บ้านคำไผ่ • พัฒนาด้วย ❤️ เพื่อการศึกษา</div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-<script>
-// ── Firebase (ดึง quick stats จากแอปขยะ) ──
-const firebaseConfig = {
-  apiKey: "AIzaSyDML31kfyPiZtWz6s9ebf7T02W7r2Y5CvA",
-  authDomain: "school-waste-tracker.firebaseapp.com",
-  databaseURL: "https://school-waste-tracker-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "school-waste-tracker",
-  storageBucket: "school-waste-tracker.firebasestorage.app",
-  messagingSenderId: "158534396656",
-  appId: "1:158534396656:web:0bea4a9fe7bff32494b035"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+<!-- ════════════════ ADMIN FAB ════════════════ -->
+<button class="admin-fab" id="fab-btn" onclick="openLogin()">
+  <span class="admin-fab-dot"></span>
+  <span id="fab-label">จัดการ Admin</span>
+</button>
 
-db.ref('records').on('value', snap => {
+<!-- ════════════════ LOGIN MODAL ════════════════ -->
+<div class="modal-bg" id="login-modal">
+  <div class="modal" style="max-width:380px">
+    <button class="modal-close" onclick="closeModal('login-modal')">✕</button>
+    <h2>🔐 Admin Login</h2>
+    <div class="form-group">
+      <label class="form-label">อีเมล</label>
+      <input class="form-input" id="login-email" type="email" placeholder="admin@school.com" autocomplete="email"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">รหัสผ่าน</label>
+      <input class="form-input" id="login-pwd" type="password" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <div class="err-msg" id="login-err"></div>
+    <button class="btn btn-green" id="login-btn" onclick="doLogin()">เข้าสู่ระบบ</button>
+  </div>
+</div>
+
+<!-- ════════════════ ADMIN PANEL MODAL ════════════════ -->
+<div class="modal-bg" id="admin-modal">
+  <div class="modal admin-modal">
+    <button class="modal-close" onclick="doLogout()">✕ ออกจากระบบ</button>
+    <h2>⚙️ Admin Panel</h2>
+
+    <div class="tab-bar">
+      <div class="tab active" onclick="switchTab('tab-logo')">🖼️ โลโก้</div>
+      <div class="tab" onclick="switchTab('tab-text')">✏️ ข้อความ</div>
+      <div class="tab" onclick="switchTab('tab-apps')">📱 แอป</div>
+    </div>
+
+    <!-- TAB: LOGO -->
+    <div class="admin-sec active" id="tab-logo">
+      <div class="logo-upload-area" onclick="document.getElementById('admin-logo-input').click()">
+        <div id="logo-preview-wrap">
+          <span class="logo-preview-emoji" id="logo-preview-emoji">🏫</span>
+        </div>
+        <div style="font-size:14px;font-weight:700;color:#94a3b8;margin-top:4px">คลิกเพื่ออัพโหลดโลโก้</div>
+        <div class="upload-hint">JPG, PNG, GIF • สูงสุด 5MB</div>
+        <input type="file" id="admin-logo-input" accept="image/*" onchange="handleAdminLogo(event)"/>
+      </div>
+      <div class="save-row" style="margin-top:14px">
+        <button class="btn btn-outline" onclick="resetLogo()" style="flex:1">รีเซ็ตเป็น 🏫</button>
+        <button class="btn btn-green" onclick="saveLogo()" style="flex:2">💾 บันทึกโลโก้</button>
+      </div>
+    </div>
+
+    <!-- TAB: TEXT -->
+    <div class="admin-sec" id="tab-text">
+      <div class="field-row"><label>ชื่อโรงเรียน</label><input id="txt-name" placeholder="Super App บ้านคำไผ่"/></div>
+      <div class="field-row"><label>คำอธิบายรอง</label><input id="txt-sub" placeholder="ระบบบริหารจัดการโรงเรียนออนไลน์"/></div>
+      <div class="field-row"><label>ข้อความ Notice</label><textarea id="txt-notice" rows="3" placeholder="เพิ่มแอปใหม่ได้ตลอด!..."></textarea></div>
+      <div class="field-row"><label>Footer</label><input id="txt-footer" placeholder="Super App บ้านคำไผ่ • พัฒนาด้วย ❤️..."/></div>
+      <div class="save-row">
+        <button class="btn btn-green" onclick="saveText()" style="flex:1">💾 บันทึกข้อความ</button>
+      </div>
+    </div>
+
+    <!-- TAB: APPS (drag & drop) -->
+    <div class="admin-sec" id="tab-apps">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">ลากเพื่อเรียงลำดับ • toggle เพื่อซ่อน/แสดง</p>
+      <div class="drag-list" id="drag-list"></div>
+      <div class="save-row">
+        <button class="btn btn-green" onclick="saveApps()" style="flex:1">💾 บันทึกลำดับแอป</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<script>
+// ═══════════════════════════════════════
+//  FIREBASE INIT
+// ═══════════════════════════════════════
+const fbConfig = {
+  apiKey:"AIzaSyDML31kfyPiZtWz6s9ebf7T02W7r2Y5CvA",
+  authDomain:"school-waste-tracker.firebaseapp.com",
+  databaseURL:"https://school-waste-tracker-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"school-waste-tracker",
+  storageBucket:"school-waste-tracker.firebasestorage.app",
+  messagingSenderId:"158534396656",
+  appId:"1:158534396656:web:0bea4a9fe7bff32494b035"
+};
+firebase.initializeApp(fbConfig);
+const auth = firebase.auth();
+const db   = firebase.database();
+
+// ═══════════════════════════════════════
+//  DEFAULT APP LIST
+// ═══════════════════════════════════════
+const DEFAULT_APPS = [
+  {id:'waste',    icon:'♻️', name:'แอปเก็บขยะโรงเรียน', desc:'บันทึกและติดตามการเก็บขยะ • ระบบคะแนน • Leaderboard', url:'waste/index.html', color:'cg', live:true,  wide:true,  visible:true},
+  {id:'board',    icon:'🏆', name:'อันดับคะแนน',        desc:'Leaderboard นักเรียน • ดูได้ทุกคน ไม่ต้อง Login',       url:'waste/public.html',color:'cb', live:true,  wide:false, visible:true},
+  {id:'stats',    icon:'📊', name:'สถิติโรงเรียน',       desc:'ยอดขยะรวม • แยกห้องเรียน • 7 วันย้อนหลัง',            url:'waste/public.html',color:'cy', live:true,  wide:false, visible:true},
+  {id:'library',  icon:'📚', name:'ห้องสมุด',            desc:'ยืม-คืนหนังสือออนไลน์',                                url:'#',               color:'cc', live:false, wide:false, visible:true},
+  {id:'lunch',    icon:'🍱', name:'อาหารกลางวัน',        desc:'สั่งอาหาร • เมนูประจำวัน',                             url:'#',               color:'cc', live:false, wide:false, visible:true},
+  {id:'pe',       icon:'🏃', name:'ออกกำลังกาย',         desc:'บันทึกกิจกรรมพลศึกษา',                                 url:'#',               color:'cc', live:false, wide:false, visible:true},
+  {id:'attend',   icon:'📝', name:'เช็คชื่อ',            desc:'เช็คชื่อนักเรียนออนไลน์',                              url:'#',               color:'cc', live:false, wide:false, visible:true},
+  {id:'garden',   icon:'🌱', name:'รดน้ำต้นไม้',         desc:'ติดตามกิจกรรมสีเขียว',                                 url:'#',               color:'cc', live:false, wide:false, visible:true},
+  {id:'reward',   icon:'⭐', name:'คะแนนความดี',         desc:'ระบบ reward โรงเรียน',                                  url:'#',               color:'cc', live:false, wide:false, visible:true},
+];
+
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+let cfg = {
+  schoolName: 'Super App บ้านคำไผ่',
+  schoolSub:  'ระบบบริหารจัดการโรงเรียนออนไลน์',
+  noticeTxt:  '<b>เพิ่มแอปใหม่ได้ตลอด!</b> ติดต่อผู้พัฒนาเพื่อเพิ่มแอปที่ต้องการ',
+  footer:     'Super App บ้านคำไผ่ • พัฒนาด้วย ❤️ เพื่อการศึกษา',
+  logoData:   null,
+  apps:       JSON.parse(JSON.stringify(DEFAULT_APPS))
+};
+let pendingLogoData = null; // base64 รอบันทึก
+
+// ═══════════════════════════════════════
+//  LOAD CONFIG FROM FIREBASE
+// ═══════════════════════════════════════
+function showLoading(v){ document.getElementById('loading').classList.toggle('show',v) }
+
+db.ref('superapp_config').on('value', snap => {
   const v = snap.val();
-  const records = v ? Object.values(v) : [];
-  const total = records.reduce((s,r) => s + (r.total||0), 0);
+  if(v){
+    if(v.schoolName) cfg.schoolName = v.schoolName;
+    if(v.schoolSub)  cfg.schoolSub  = v.schoolSub;
+    if(v.noticeTxt)  cfg.noticeTxt  = v.noticeTxt;
+    if(v.footer)     cfg.footer     = v.footer;
+    if(v.logoData)   cfg.logoData   = v.logoData;
+    if(v.apps && Array.isArray(v.apps)) cfg.apps = v.apps;
+  }
+  applyConfig();
+  showLoading(false);
+});
+showLoading(true);
+
+// ═══════════════════════════════════════
+//  APPLY CONFIG → DOM
+// ═══════════════════════════════════════
+function applyConfig(){
+  document.getElementById('main-school-name').textContent = cfg.schoolName;
+  document.getElementById('main-school-sub').textContent  = cfg.schoolSub;
+  document.getElementById('main-notice-txt').innerHTML    = cfg.noticeTxt;
+  document.getElementById('main-footer').textContent      = cfg.footer;
+
+  // logo
+  const logoBox = document.getElementById('main-logo');
+  if(cfg.logoData){
+    logoBox.innerHTML = `<img src="${cfg.logoData}" alt="logo"/>`;
+  } else {
+    logoBox.innerHTML = `<span id="main-logo-emoji">🏫</span>`;
+  }
+
+  // apps
+  renderApps(cfg.apps);
+
+  // fill admin text fields if open
+  document.getElementById('txt-name').value    = cfg.schoolName;
+  document.getElementById('txt-sub').value     = cfg.schoolSub;
+  document.getElementById('txt-notice').value  = cfg.noticeTxt.replace(/<[^>]+>/g,'');
+  document.getElementById('txt-footer').value  = cfg.footer;
+
+  // update logo preview in admin
+  updateAdminLogoPreview(cfg.logoData);
+}
+
+// ═══════════════════════════════════════
+//  RENDER APPS
+// ═══════════════════════════════════════
+function renderApps(apps){
+  const container = document.getElementById('apps-render');
+  const liveApps   = apps.filter(a => a.visible && a.live);
+  const comingApps = apps.filter(a => a.visible && !a.live);
+
+  let html = '';
+
+  if(liveApps.length){
+    html += `<div class="sec-title">🟢 พร้อมใช้งาน</div><div class="apps-grid">`;
+    liveApps.forEach(a => {
+      const wide = a.wide ? 'wide' : '';
+      html += `<a href="${a.url}" class="app-card ${a.color} ${wide}">
+        ${wide ? '' : `<span class="badge badge-live">● LIVE</span>`}
+        <span class="app-icon">${a.icon}</span>
+        ${wide ? `<div class="app-text">` : ''}
+        <div class="app-name">${a.name}</div>
+        <div class="app-desc">${a.desc}</div>
+        ${wide ? `</div><span class="badge badge-live" style="position:static;margin-left:8px">● LIVE</span>` : ''}
+        <span class="arr">→</span>
+      </a>`;
+    });
+    html += `</div>`;
+  }
+
+  if(comingApps.length){
+    html += `<div class="sec-title">🔜 เร็วๆ นี้</div><div class="apps-grid">`;
+    comingApps.forEach(a => {
+      html += `<div class="app-card cc">
+        <span class="badge badge-soon">เร็วๆ นี้</span>
+        <span class="app-icon">${a.icon}</span>
+        <div class="app-name">${a.name}</div>
+        <div class="app-desc">${a.desc}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+// ═══════════════════════════════════════
+//  STATS
+// ═══════════════════════════════════════
+db.ref('records').on('value', snap => {
+  const vals = snap.val() ? Object.values(snap.val()) : [];
+  const total = vals.reduce((s,r)=>s+(r.total||0),0);
   const today = new Date().toISOString().slice(0,10);
-  const todayTotal = records.filter(r => r.date?.slice(0,10) === today).reduce((s,r) => s + (r.total||0), 0);
-  document.getElementById('qs-waste').textContent = total.toLocaleString();
-  document.getElementById('qs-records').textContent = records.length.toLocaleString();
-  document.getElementById('qs-today').textContent = todayTotal.toLocaleString();
+  const td = vals.filter(r=>r.date?.slice(0,10)===today).reduce((s,r)=>s+(r.total||0),0);
+  document.getElementById('qs-waste').textContent   = total.toLocaleString();
+  document.getElementById('qs-records').textContent = vals.length.toLocaleString();
+  document.getElementById('qs-today').textContent   = td.toLocaleString();
 });
 db.ref('members').on('value', snap => {
   const v = snap.val();
-  const count = v ? Object.values(v).filter(m => m.type === 'student').length : 0;
-  document.getElementById('qs-members').textContent = count.toLocaleString();
+  const c = v ? Object.values(v).filter(m=>m.type==='student').length : 0;
+  document.getElementById('qs-members').textContent = c.toLocaleString();
 });
 
-// ── Greeting ──
+// ═══════════════════════════════════════
+//  GREETING
+// ═══════════════════════════════════════
 const h = new Date().getHours();
-const greet = h < 12 ? 'อรุณสวัสดิ์! ☀️ พร้อมเรียนรู้วันนี้ไหม?' : h < 17 ? 'สวัสดีตอนบ่าย! 🌤️ อย่าลืมดูแลสิ่งแวดล้อมนะ' : 'สวัสดีตอนเย็น! 🌙 วันนี้เก็บขยะไปเท่าไหร่แล้ว?';
-document.getElementById('greeting-text').textContent = greet;
+document.getElementById('greeting-txt').textContent =
+  h<12 ? 'อรุณสวัสดิ์! ☀️ พร้อมเรียนรู้วันนี้ไหม?' :
+  h<17 ? 'สวัสดีตอนบ่าย! 🌤️ อย่าลืมดูแลสิ่งแวดล้อม' :
+         'สวัสดีตอนเย็น! 🌙 วันนี้เก็บขยะไปเท่าไหร่?';
 
-// ── Floating particles ──
-const emojis = ['🍃','⭐','✨','🌟','♻️','🌱','🎈','💫','🌸','🦋'];
-const pw = document.getElementById('particles');
-for(let i = 0; i < 20; i++){
-  const p = document.createElement('div');
-  p.className = 'p';
-  p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-  p.style.cssText = `left:${Math.random()*100}%;font-size:${12+Math.random()*16}px;animation-duration:${10+Math.random()*15}s;animation-delay:${Math.random()*12}s`;
+// ═══════════════════════════════════════
+//  PARTICLES
+// ═══════════════════════════════════════
+const emojis=['🍃','⭐','✨','🌟','♻️','🌱','🎈','💫','🌸','🦋'];
+const pw=document.getElementById('ptcl');
+for(let i=0;i<20;i++){
+  const p=document.createElement('div');p.className='pt';
+  p.textContent=emojis[~~(Math.random()*emojis.length)];
+  p.style.cssText=`left:${Math.random()*100}%;font-size:${12+Math.random()*14}px;animation-duration:${10+Math.random()*14}s;animation-delay:${Math.random()*12}s`;
   pw.appendChild(p);
 }
+
+// ═══════════════════════════════════════
+//  MODAL HELPERS
+// ═══════════════════════════════════════
+function openModal(id){ document.getElementById(id).classList.add('open') }
+function closeModal(id){ document.getElementById(id).classList.remove('open') }
+
+function showToast(msg, isErr=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.toggle('err',isErr);
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+// ═══════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════
+auth.onAuthStateChanged(user => {
+  document.getElementById('fab-label').textContent = user ? '⚙️ จัดการระบบ' : 'จัดการ Admin';
+});
+
+function openLogin(){
+  if(auth.currentUser){ openAdminPanel(); return; }
+  document.getElementById('login-err').textContent='';
+  openModal('login-modal');
+}
+
+async function doLogin(){
+  const email = document.getElementById('login-email').value.trim();
+  const pwd   = document.getElementById('login-pwd').value;
+  const btn   = document.getElementById('login-btn');
+  const errEl = document.getElementById('login-err');
+  errEl.textContent='';
+  if(!email||!pwd){ errEl.textContent='กรุณากรอกอีเมลและรหัสผ่าน'; return; }
+  btn.disabled=true; btn.textContent='กำลังเข้าสู่ระบบ...';
+  try{
+    await auth.signInWithEmailAndPassword(email,pwd);
+    closeModal('login-modal');
+    openAdminPanel();
+    showToast('✅ เข้าสู่ระบบสำเร็จ!');
+  } catch(e){
+    errEl.textContent = e.code==='auth/wrong-password'||e.code==='auth/user-not-found'
+      ? 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' : 'เกิดข้อผิดพลาด: '+e.message;
+  }
+  btn.disabled=false; btn.textContent='เข้าสู่ระบบ';
+}
+
+document.getElementById('login-pwd').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+function doLogout(){
+  auth.signOut();
+  closeModal('admin-modal');
+  showToast('ออกจากระบบแล้ว');
+}
+
+// ═══════════════════════════════════════
+//  ADMIN PANEL OPEN
+// ═══════════════════════════════════════
+function openAdminPanel(){
+  // fill fields
+  document.getElementById('txt-name').value    = cfg.schoolName;
+  document.getElementById('txt-sub').value     = cfg.schoolSub;
+  document.getElementById('txt-notice').value  = cfg.noticeTxt.replace(/<b>/g,'').replace(/<\/b>/g,'');
+  document.getElementById('txt-footer').value  = cfg.footer;
+  updateAdminLogoPreview(cfg.logoData);
+  buildDragList(cfg.apps);
+  switchTab('tab-logo');
+  openModal('admin-modal');
+}
+
+// ═══════════════════════════════════════
+//  TABS
+// ═══════════════════════════════════════
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    const tabs=['tab-logo','tab-text','tab-apps'];
+    t.classList.toggle('active', tabs[i]===id);
+  });
+  document.querySelectorAll('.admin-sec').forEach(s => s.classList.toggle('active', s.id===id));
+}
+
+// ═══════════════════════════════════════
+//  LOGO TAB
+// ═══════════════════════════════════════
+function updateAdminLogoPreview(data){
+  const wrap = document.getElementById('logo-preview-wrap');
+  if(data){
+    wrap.innerHTML=`<img class="logo-preview" src="${data}" alt="logo preview"/>`;
+  } else {
+    wrap.innerHTML=`<span class="logo-preview-emoji" id="logo-preview-emoji">🏫</span>`;
+  }
+}
+
+function handleAdminLogo(e){
+  const file=e.target.files[0]; e.target.value='';
+  if(!file) return;
+  if(!file.type.startsWith('image/')){ showToast('❌ เลือกไฟล์รูปภาพเท่านั้น',true); return; }
+  if(file.size>5*1024*1024){ showToast('❌ ไฟล์ใหญ่เกินไป (สูงสุด 5MB)',true); return; }
+  const r=new FileReader();
+  r.onload=ev=>{ pendingLogoData=ev.target.result; updateAdminLogoPreview(pendingLogoData); showToast('📷 โหลดรูปแล้ว — กด "บันทึกโลโก้" เพื่อบันทึก'); };
+  r.readAsDataURL(file);
+}
+
+function resetLogo(){ pendingLogoData=''; updateAdminLogoPreview(null); }
+
+async function saveLogo(){
+  if(pendingLogoData===null){ showToast('⚠️ ยังไม่ได้เลือกรูปใหม่'); return; }
+  try{
+    await db.ref('superapp_config/logoData').set(pendingLogoData||null);
+    cfg.logoData=pendingLogoData||null;
+    pendingLogoData=null;
+    applyConfig();
+    showToast('✅ บันทึกโลโก้สำเร็จ!');
+  } catch(e){ showToast('❌ บันทึกไม่สำเร็จ: '+e.message,true); }
+}
+
+// ═══════════════════════════════════════
+//  TEXT TAB
+// ═══════════════════════════════════════
+async function saveText(){
+  const name   = document.getElementById('txt-name').value.trim()   || cfg.schoolName;
+  const sub    = document.getElementById('txt-sub').value.trim()    || cfg.schoolSub;
+  const notice = document.getElementById('txt-notice').value.trim() || 'เพิ่มแอปใหม่ได้ตลอด!';
+  const footer = document.getElementById('txt-footer').value.trim() || cfg.footer;
+  try{
+    await db.ref('superapp_config').update({ schoolName:name, schoolSub:sub, noticeTxt:notice, footer });
+    showToast('✅ บันทึกข้อความสำเร็จ!');
+  } catch(e){ showToast('❌ บันทึกไม่สำเร็จ',true); }
+}
+
+// ═══════════════════════════════════════
+//  APPS TAB — DRAG & DROP
+// ═══════════════════════════════════════
+let dragSrc=null;
+
+function buildDragList(apps){
+  const list=document.getElementById('drag-list');
+  list.innerHTML='';
+  apps.forEach((a,i)=>{
+    const item=document.createElement('div');
+    item.className='drag-item';
+    item.draggable=true;
+    item.dataset.id=a.id;
+    item.innerHTML=`
+      <span class="drag-handle">⠿</span>
+      <span class="drag-icon">${a.icon}</span>
+      <div class="drag-info">
+        <div class="drag-title">${a.name}</div>
+        <div class="drag-sub">${a.live?'🟢 พร้อมใช้งาน':'🔜 เร็วๆ นี้'}</div>
+      </div>
+      <label class="toggle drag-toggle">
+        <input type="checkbox" ${a.visible?'checked':''} onchange="toggleApp('${a.id}',this.checked)"/>
+        <span class="toggle-slider"></span>
+      </label>`;
+    // drag events
+    item.addEventListener('dragstart', e=>{ dragSrc=item; item.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
+    item.addEventListener('dragend',   ()=>{ item.classList.remove('dragging'); document.querySelectorAll('.drag-item').forEach(x=>x.classList.remove('drag-over')); });
+    item.addEventListener('dragover',  e=>{ e.preventDefault(); e.dataTransfer.dropEffect='move'; item.classList.add('drag-over'); });
+    item.addEventListener('dragleave', ()=>item.classList.remove('drag-over'));
+    item.addEventListener('drop', e=>{ e.preventDefault(); if(dragSrc&&dragSrc!==item){ const allItems=[...list.children]; const si=allItems.indexOf(dragSrc),di=allItems.indexOf(item); if(si<di) item.after(dragSrc); else item.before(dragSrc); } item.classList.remove('drag-over'); });
+    // touch drag support
+    addTouchDrag(item, list);
+    list.appendChild(item);
+  });
+}
+
+function toggleApp(id, checked){
+  const a = cfg.apps.find(x=>x.id===id);
+  if(a) a.visible=checked;
+}
+
+async function saveApps(){
+  // read order from DOM
+  const items=[...document.getElementById('drag-list').children];
+  const newApps=items.map(el=>{
+    const id=el.dataset.id;
+    const found=cfg.apps.find(a=>a.id===id)||DEFAULT_APPS.find(a=>a.id===id);
+    const vis=el.querySelector('input[type=checkbox]').checked;
+    return {...found, visible:vis};
+  });
+  try{
+    await db.ref('superapp_config/apps').set(newApps);
+    cfg.apps=newApps;
+    renderApps(newApps);
+    showToast('✅ บันทึกลำดับแอปสำเร็จ!');
+  } catch(e){ showToast('❌ บันทึกไม่สำเร็จ',true); }
+}
+
+// ─── Touch drag helper ───
+function addTouchDrag(item, list){
+  let startY,clone,origRect;
+  item.addEventListener('touchstart', e=>{
+    if(!e.target.closest('.drag-handle')) return;
+    startY=e.touches[0].clientY;
+    origRect=item.getBoundingClientRect();
+    clone=item.cloneNode(true);
+    clone.style.cssText=`position:fixed;top:${origRect.top}px;left:${origRect.left}px;width:${origRect.width}px;z-index:999;opacity:.85;pointer-events:none;border:1px solid #4ade80;border-radius:12px`;
+    document.body.appendChild(clone);
+    item.style.opacity='.3';
+  },{passive:true});
+  item.addEventListener('touchmove', e=>{
+    if(!clone) return; e.preventDefault();
+    const dy=e.touches[0].clientY-startY;
+    clone.style.top=(origRect.top+dy)+'px';
+    const mid=origRect.top+dy+origRect.height/2;
+    [...list.children].forEach(el=>{
+      if(el===item) return;
+      const r=el.getBoundingClientRect();
+      if(mid>r.top&&mid<r.bottom){
+        if(mid<r.top+r.height/2) el.before(item); else el.after(item);
+      }
+    });
+  },{passive:false});
+  item.addEventListener('touchend', ()=>{
+    if(clone){ clone.remove(); clone=null; }
+    item.style.opacity='';
+  });
+}
+
+// close modal on bg click
+document.querySelectorAll('.modal-bg').forEach(bg=>{
+  bg.addEventListener('click', e=>{ if(e.target===bg) bg.classList.remove('open'); });
+});
 </script>
 </body>
 </html>
