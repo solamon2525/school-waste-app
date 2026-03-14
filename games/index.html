@@ -84,11 +84,12 @@
     .card:nth-child(5){animation-delay:.25s}.card:nth-child(6){animation-delay:.30s}
     .card:nth-child(7){animation-delay:.35s}.card:nth-child(8){animation-delay:.40s}
     .card:hover{transform:translateY(-6px);box-shadow:0 14px 40px rgba(0,0,0,.5);border-color:var(--red)}
-    .thumb{width:100%;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;
-      font-size:3.8rem;background:linear-gradient(135deg,var(--bg2),var(--surface))}
+    .thumb{width:100%;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,var(--bg2),var(--surface));overflow:hidden}
+    .thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s ease}
+    .card:hover .thumb img{transform:scale(1.05)}
     .card-body{padding:12px 14px 14px;flex:1;display:flex;flex-direction:column;gap:6px}
     .card-name{font-size:14px;font-weight:600;line-height:1.4}
-    .card-desc{font-size:12px;color:var(--muted);line-height:1.5;flex:1}
     .card-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
     .tag{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500}
     .t-thai{background:rgba(229,57,53,.15);color:#ef9a9a;border:1px solid rgba(229,57,53,.3)}
@@ -145,6 +146,7 @@
     <button class="fbtn" onclick="setF('thai',this)">🇹🇭 ภาษาไทย</button>
     <button class="fbtn" onclick="setF('math',this)">🔢 คณิตศาสตร์</button>
     <button class="fbtn" onclick="setF('tech',this)">💻 เทคโนโลยี</button>
+    <button class="fbtn" onclick="setF('other',this)">✨ อื่นๆ</button>
   </div>
 </div>
 
@@ -161,14 +163,34 @@
 
 <script>
 const GAMES = [
-  { name:"ตกปลามาตราตัวสะกด", cat:"thai", icon:"🎣", url:"thai/fishing.html",    desc:"ตกปลาตามมาตราตัวสะกด ฝึกภาษาไทยอย่างสนุก" },
-  { name:"Flappy Bird มาตรา",   cat:"thai", icon:"🐦", url:"thai/flappy-bird.html", desc:"บินเก็บคำตามมาตราตัวสะกดที่ถูกต้อง" },
-  { name:"Attack on คำนาม",    cat:"thai", icon:"⚔️", url:"thai/attack-noun.html",  desc:"โจมตีคำนาม! คลิกคำที่เป็นคำนามให้ถูกต้อง" },
-  { name:"Math Jumper",         cat:"math", icon:"🦘", url:"math/math-jumper.html",  desc:"กระโดดผ่านด่านด้วยการตอบโจทย์คณิตศาสตร์" },
-  { name:"Pizza เศษส่วน",      cat:"math", icon:"🍕", url:"math/pizza.html",         desc:"เรียนรู้เศษส่วนผ่านการแบ่งพิซซ่า" },
-  { name:"เกม 24",              cat:"math", icon:"🃏", url:"math/game24.html",        desc:"ใช้ 4 ตัวเลขทำให้ได้ 24 ท้าทายสมอง!" },
-  { name:"ฝึกพิมพ์",            cat:"tech", icon:"⌨️", url:"tech/typing.html",        desc:"ฝึกพิมพ์สัมผัสทั้งภาษาไทยและอังกฤษ" },
-  { name:"Blockly Games",       cat:"tech", icon:"🧩", url:"tech/blockly.html",       desc:"เรียนรู้การเขียนโปรแกรมด้วย Blockly ง่ายๆ" },
+  { name: "ตกปลามาตรา ตัวสะกด", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0STT9YBuH4DTR0dzqY2EpLziVqbX_EpiDOJ3JUcJw9bbO6PhZdTXWGGpVxS5T_VwL0YxPULBH0RIz191MB9e9VVWMn3F9rsEkSUAiVCMNQfYHH9FpIxS8vWPiLVeDhuZzQbBwspvZUXz-7JLSeUMLOS4ks__falA19WJBIBDGuugomQ_obLKg9BazcY=w1280", url: "https://gemini.google.com/share/c601ecba61e3" },
+  { name: "คำไวพจน์", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SRdeo3HxEyRCeMcYkFy-oEVmASn_unmTiAtG9jdMx69wRSFqynXMIb-n-YN9FOqQB4yxdlVAxE928fYoe3usvac6fyufc7trq_rxvfQzu9uoxPMZ_c-PPIr-VkJHkmDMPctJZzGmt1x8i0odWN_L4azwdu7korxZJSaW0Fw9QZxxgLvtSvbslcP=w1280", url: "https://gemini.google.com/share/a7d234c90957" },
+  { name: "Attack on คำนาม", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SQvmk1pfGttMXXlKlVGVauG8LWmBiBuInCxP2Db9qdAQ_eb-zHpTfQ7F7_WlxWEO4O6mxc2PdBOjNg3tOgTzvsHXEwio887R2xjvPF5U7h3cdqXjt-OKs50HX3-5aETS44GHQW-xSOgMvZlqO5u_He8C8SmRejRonIlvGEOULIkrfcSpVtassf8=w1280", url: "https://gemini.google.com/share/ecc7dac430d6" },
+  { name: "สงครามรถถังชิงดินแดนคำนาม", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0ST8C_i4wDsrFOVR8TpwS-VDPZ9GHgtBwTrICCVcaCA2vb06xgXowykqDli-BJV6VlJKSPsTHQpxxAJIWSgk7A2CKGAS05q8kZ0YRbyH8rBOlnw0Bn0ZRFiVmovpx-mhCWKm4xz44kydV75f8EZHQvtG99mR7eUdPI0ZH2TscCjFKJcWxDeG3RkUdME=w1280", url: "https://gemini.google.com/share/2dd7d3327bb6" },
+  { name: "เจ้าหนูคิดไว Math Jumper", cat: "math", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SSyOKnzAtl-W3HRbGCwDlCWfu7OCpso19RP4ZU-5yncKLkd2O30WCYfPI3dcDHAgn-slfQIDv23xGShngHdZyZBN-FKgUlPBdTb1YvSDd-kVFtBrM7EzSjhbJ6hSr_fTRKaG6_3rArtoK7evQeF6CYL2HIym4pCK0PABdoU28zTjSG1DNFeKzHzZZ4=w1280", url: "https://gemini.google.com/share/aee7dcd29e8b" },
+  { name: "เกม 24", cat: "math", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SStbFJU6CveY4isw87OLYL1PnZ0lobNkMsLobxUhVt9ixpEpptuQhX-dJJFjamhM7UEIFKqLqTdkJTt325hc3IVDFtn5sdne5AbfEzDTBdQ4prYaYAhXi3_1zjJZsUFlo73v3Q9Vsl9Q_UjaTTzWVniS7J8AxXOZrGu1BlFCDzQICavQFFyakUk=w1280", url: "https://gemini.google.com/share/82c577f40612" },
+  { name: "Pizza Master Chef ล่าเศษส่วน", cat: "math", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SQAbReZLcopmpg-_hp3fPakZhv4ElMqRyXLXPGvMZvdCEhlkJbqLHni_ESWeWHNGhHuX5Xzo6kfCBlODTTo8FcBtAwml9QCd7A9uJIWDCOptXcxD7ewpazYfxEbFwwgJxgDfoyExH6WF5nekaNDD_ZfX59xKas18vKZn4ROW4lcoAYr2sW6l_61I74=w1280", url: "https://gemini.google.com/share/90ff2781996e" },
+  { name: "วงล้อซ่อนหา อักษรนำ", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SQ4pNeXy_4slKMW4G_K5bF7SU2FDocv0O2GlSLSKmPDYZ_1uUBnzyre8q0bS-Tk_0AZ9de05a2IEm673GOgts2hZ4zoWT3y5qiRSs_radP_p-6SCjSBLP_B_31GJSTws-21me9-Mx1rIB4cgfLsSgYO4lf8X_f526gYdIxei2mM99X8JAK_XoEB8R0=w1280", url: "https://gemini.google.com/share/65196b5639a5" },
+  { name: "Kingdom Duel ศึกจอมปราชญ์ราชสำนัก", cat: "other", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SSuLl8sAbN5YDVkQtSi6CAliI03SB_yid5KgQLAZeyzH_IyLCXr93-m2oYdXZXVxlQTwEevPFRtgI4hc2zQqqkmnpXBdoq0fxy6K3BIL7n_J5KGxMTVJdCIWi7dRiEKNuTRQCgS4TIVX0frIvOXuGPI6KljL6r1c4Qb_VoMS9PS5HJbJlS9ow8q=w1280", url: "https://gemini.google.com/share/93d056345b54" },
+  { name: "Fraction Tank Battle รถถังเศษส่วน", cat: "math", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SQBVN81AdopkVC7PAcW8gUnen0MlDx-Vlk4rqWwgDW7qPq1O2Z1he9f2OlpqIGMd7wtLIfRCk9C1bTk2R9EvJsdahGAiVjVDC4WbNIee6zmXAMLFk8CHlbAWtfH73fhvblasfJfHFZZWnz3VwdKui1uP7ytNa4VbGdxT8EgIDun6Pq8y49L4yjvnYE=w1280", url: "https://gemini.google.com/share/356191986427" },
+  { name: "Flappy Thai Missions ภารกิจพิชิตมาตรา", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SSK70bYc6kUXHEVQd0tr0dUfkDxCh7x33wKT5vDtkMiXPz545x8nAbWnyXpx9mSC86hclbfCH9hQ9Sl6cFYkg2uKkdK5tPS8mvix4rkHGm-h20ggKZS3Y-2_a-AM0MoQvs607KWRWy7n1DJ7yS6cLLoPxguRmwkF4OsHPk_cM5T2DEI5B9hXCMu=w1280", url: "https://gemini.google.com/share/393b4fd133d9" },
+  { name: "งูผู้หิวโหย มาตราตัวสะกด", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SSo4z-TrPJh_fTZoyWQCPXrxPZaHyBAWXZaEkmOL3kj11zwbSauK3J7PRSJ0sTzENqamxDRlAnceYRkSLCMgl5logISaKc5F5aAB4QS6LLnAAMQEnfLhmDbUOiGfzZSJ3hP04UMEpkQomfNq2PrwK5vOFPtAjC0ZrOZxSw0Tkf6VUsXOL0XLGH0OpE=w1280", url: "https://gemini.google.com/share/b033878b6637" },
+  { name: "ฝึกพิมพ์", cat: "tech", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SQUb_EbndkUwm0a6O8pGJa5ChgzL2j0GEuJA_87sKx-Kx8VxFuu2HTM5_rLxpxdBAkfoNdGq-epLb8J7Lpe4nONPPYTE2AZ3uh-3rFQP2WfvxjtkSm1cnEZc7qVCLmOPIbFtem5-x0LlBfsYaM1exF_nXavtyKxZNxjSLOvJtqeJhWESz7WAxTceMRBqkz9R_Exq8GY124QnWimbk3wITGq2e_xGsXiaaBbGjY=w1280", url: "https://gemini.google.com/share/5243cf0c5874" },
+  { name: "Blockly Games", cat: "tech", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SRG2yOPlsNjuWyAx2Om85LcTLr8ROTKF8HQAGPDqK-4NjneB8igtttWAsGDfi1SA2ZYeUGoxDfjueOjYwujud6Anzlt0ZQJHOU9FOX5hvGWwubS1wn6YpnsCM2TkKV2glpePiSJLvMFlYgCnErhdE7JMqwv4w0R1QvXCUawwz9tR7SA6v7vAxspr3E=w1280", url: "https://gemini.google.com/share/46b0805c872d" },
+  { name: "รถถังหาศัพท์ Battle City", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SRbR4CvM5h6aml1wNDih3tULF2v_yqvxdVSopUxQfTGt1hH4sGyDc5spSGYWKcLYJXgvTLbO6BL-pBXaaQUAn5cLF8Iz53l-8-Fvq9mxlgOKoxYUyJwvj7k4PzFX6JsZ0Uh0-Obcwlcl3FNVSmTSGlOIGCrVfW8-mIde0lWf1FYfbgPCbZHQBgjBIc=w1280", url: "https://gemini.google.com/share/07e841269ed1" },
+  { name: "มือปราบคำผิด", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SRiOrfZQhqLCXP1yQvib4cQIy5MXrtEnYcECJ0rPw06Rne_HYF4YAXaOpmE9CLzdvglE-Mkslt2i58nWBWM3pseioQcKF4FUB39l2rCVFExj61Zu_I_ORaWEV23eINkpZyhKSvltkI9uuCp08D8TFzOp2v-mlnuK6GzRBRpVyPHAT62sDIy-mCHd2I=w1280", url: "https://gemini.google.com/share/88d660e19747" },
+  { name: "นักสืบโจทย์ปัญหา", cat: "math", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SRn4xQWc_c-UyoDY_5h8eLnBH5Hnzl6QwhB3mgntkcxaOY150i8Ed8bPn0dogJIev0EvS6VOr64_j-BXu6tva36UU9ekiCEMpm4xtPFMXmmLYEVcfzPfKbfpADVXMmB7eUupNr4_m55-voQ5StcjCsr_7wUM-EMP-kXuFpsBW9ajSpPwAZNWYKpj1w=w1280", url: "https://gemini.google.com/share/22588f00fc9d" },
+  { name: "ป้อมปราการนักคำนวณ", cat: "math", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SRM6SzHsY2nGcp3aSW5LgunA9ARoHCqcqeL8MHf_T177DHeEN8eBVm6LicINp3WbcMleYLMX6JXytHaqtgEinysL8XBPdnWPcwXjz8rANdS-go8ru1G-jSH1tLbTbkNkJQDqYhJxMyNBHzOHgtVPfGVfn34PeC5OHR15puU2mEy-BHLTK_EHS2-uNQ=w1280", url: "https://gemini.google.com/share/b5170dcb0dfc" },
+  { name: "มอไซต์จอมลุยมาตรา", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0STV-Y5TXaBqm_x6K0AbPC-41A2AN83l7FOVAEJtd9Hxz0tOemBBHzPOBcRQkVAHLziXBTCvYAn_BUTpBhR4cLyMgJ89KGdyG0dVSwYrNrr1M-FCf2BPy48V9KMQMIVDsFqT5GUEyzsUl5KzLtblukj9zuljCDOE7nvwz1xZDVPQjjBeaTsRlhmtaJ4=w1280", url: "https://gemini.google.com/share/5d5410972b21" },
+  { name: "มหาศึกอักขระเวท", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SRXs3tp1OMNev935OErsPJ-EcMCZMg1aLrYSnf5jRMpacZ98VSsIWyy99kmNiWzNAGTUkRNEfEuEQwOm-XGKb0c0A2Xluvv6HnGzsKtZNaSc80EyRstEI5-tM2hITVcldF6xfTq1Z-E0mgcbQ3IgMaYPmDvV3nZPNydccTbh9f1p7rd7SBgktqg0aw=w1280", url: "https://gemini.google.com/share/a0904f464522" },
+  { name: "Shinobi: นินจากระต่ายล่าคำนาม", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SQ5t7jPg3b9gQ4RkUwHMj3wt0gBs6fgvhyzR5OZOgwBvE9Ut7Q2D9ZHqEh8Uo6rzxizGW4rkFZ-X_bMTWZ2pKHOI7x7FsayaAFg9-IgH0brJVXEYby9V3geP9g8bEey_9vBHjfB_xxlgsTBD7Tzo-UezDOkSP0fjnFSFS1v-F6LaCnTFiVRTl6NOd4=w1280", url: "https://gemini.google.com/share/f5756bfcd18e" },
+  { name: "Super Math-Blaster", cat: "math", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SSqSGYeJM6VwndoFQ4SRYQsoclyHNGIKBt6jsh5OEC-vXWtmCjeVB_uk3zEiOFgbALeNEKwYlq702wVNNFPa_4TE5Jl8xizD0F3azb-6_fW8bjdjdK5_65XvbF45-qvwQuJ8KOOva1MObPgMlnSEQ3gWsCbgnhwOeS54iibMNW1ORo5shdCWXXI=w1280", url: "https://gemini.google.com/share/139049405d45" },
+  { name: "ศึกจอมเวทแห่งภาษา", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SQg8GkuZe6PLPudP02sbMaWSlUTC1YZkyK3-ZkAZhpu3N7XjvfBC-q23w_nNeJZdY6ab_VfaAKAiP7dd2p0-tJjxipJXNp7sFIXZDe9X8sg7KQkh6WrGDSwMrf9plYrY0XScYLywp39Dx2KazkGVdezh6d2HkmqTbIHVWGD0KL1YA3DRPnK_3uMje0=w1280", url: "https://gemini.google.com/share/9ea72960f2bb" },
+  { name: "Word Shield | โล่คำศัพท์พิทักษ์โลก", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SRrKv7ZDEh7HBMngDE3v82AzQ1ncbPCLHLMfc8EfNSeDqbCAkl75zSXXq0OFsg6pzOiQ75GUTtSS-hQDrzSlacejn4pI10zALspaesZXDwXNUOuWCH4NgEs7O511jc40s5rZPCAr6SEfJM3GSxWz58lNH6mPKoaI8wVs_Xuo3KSi9TzGDElGEUwBAY=w1280", url: "https://gemini.google.com/share/5d55653b47bd" },
+  { name: "ปาร์ตี้อาหารจอมตะกละ", cat: "other", img: "https://lh3.googleusercontent.com/sitesv/APaQ0STT9YBuH4DTR0dzqY2EpLziVqbX_EpiDOJ3JUcJw9bbO6PhZdTXWGGpVxS5T_VwL0YxPULBH0RIz191MB9e9VVWMn3F9rsEkSUAiVCMNQfYHH9FpIxS8vWPiLVeDhuZzQbBwspvZUXz-7JLSeUMLOS4ks__falA19WJBIBDGuugomQ_obLKg9BazcY=w1280", url: "https://gemini.google.com/share/ad6427303d82" },
+  { name: "ขนมแสนอร่อยของเจ้าตัวเปี๊ยก", cat: "other", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SRdeo3HxEyRCeMcYkFy-oEVmASn_unmTiAtG9jdMx69wRSFqynXMIb-n-YN9FOqQB4yxdlVAxE928fYoe3usvac6fyufc7trq_rxvfQzu9uoxPMZ_c-PPIr-VkJHkmDMPctJZzGmt1x8i0odWN_L4azwdu7korxZJSaW0Fw9QZxxgLvtSvbslcP=w1280", url: "https://gemini.google.com/share/c13f63124971" },
+  { name: "ภารกิจพิชิตมาตราแม่กง", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SQvmk1pfGttMXXlKlVGVauG8LWmBiBuInCxP2Db9qdAQ_eb-zHpTfQ7F7_WlxWEO4O6mxc2PdBOjNg3tOgTzvsHXEwio887R2xjvPF5U7h3cdqXjt-OKs50HX3-5aETS44GHQW-xSOgMvZlqO5u_He8C8SmRejRonIlvGEOULIkrfcSpVtassf8=w1280", url: "https://gemini.google.com/share/67a3533ecafb" },
+  { name: "ดินแดนหรรษา มาตราแม่เกย", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0ST8C_i4wDsrFOVR8TpwS-VDPZ9GHgtBwTrICCVcaCA2vb06xgXowykqDli-BJV6VlJKSPsTHQpxxAJIWSgk7A2CKGAS05q8kZ0YRbyH8rBOlnw0Bn0ZRFiVmovpx-mhCWKm4xz44kydV75f8EZHQvtG99mR7eUdPI0ZH2TscCjFKJcWxDeG3RkUdME=w1280", url: "https://gemini.google.com/share/f50fedf39f8a" }
 ];
 
 let filter="all", q="";
@@ -182,23 +204,22 @@ function render(){
   if(!data.length){grid.innerHTML="";empty.classList.add("on");return}
   empty.classList.remove("on");
   grid.innerHTML=data.map(g=>`
-    <a class="card" href="${g.url}">
-      <div class="thumb">${g.icon}</div>
+    <a class="card" href="${g.url}" target="_blank">
+      <div class="thumb"><img src="${g.img||'https://via.placeholder.com/300x170'}" alt="${g.name}" loading="lazy"/></div>
       <div class="card-body">
         <div class="card-name">${g.name}</div>
-        <div class="card-desc">${g.desc}</div>
         <div class="card-tags"><span class="tag t-${g.cat}">${catLabel(g.cat)}</span></div>
       </div>
     </a>`).join("");
 }
 
-function catLabel(c){return{thai:"ภาษาไทย",math:"คณิตศาสตร์",tech:"เทคโนโลยี"}[c]||c}
+function catLabel(c){return{thai:"ภาษาไทย",math:"คณิตศาสตร์",tech:"เทคโนโลยี",other:"อื่นๆ"}[c]||c}
 
 function setF(f,btn){
   filter=f;
   document.querySelectorAll(".fbtn").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
-  const t={all:"เกมส์ทั้งหมด",thai:"ภาษาไทย",math:"คณิตศาสตร์",tech:"เทคโนโลยี"};
+  const t={all:"เกมส์ทั้งหมด",thai:"ภาษาไทย",math:"คณิตศาสตร์",tech:"เทคโนโลยี",other:"อื่นๆ"};
   document.getElementById("sec-title").textContent=t[f]||"เกมส์";
   render();
 }
