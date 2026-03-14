@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>เกมส์การเรียนรู้ — โรงเรียนบ้านคำไผ่</title>
+  <meta name="description" content="รวมเกมส์การเรียนรู้สำหรับนักเรียนโรงเรียนบ้านคำไผ่ ครบทุกวิชา" />
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --red:#e53935;--bg:#0d1117;--bg2:#161b22;--surface:#1c2128;
+      --border:#30363d;--text:#e6edf3;--muted:#8b949e;--radius:12px;
+    }
+    body{font-family:'Kanit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+    /* NAV */
+    .nav{position:sticky;top:0;z-index:100;background:rgba(13,17,23,.92);backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--border);display:flex;align-items:center;
+      justify-content:space-between;padding:0 20px;height:56px}
+    .nav-left{display:flex;align-items:center;gap:12px}
+    .back{text-decoration:none;color:var(--muted);font-size:13px;font-weight:500;
+      padding:5px 12px;border-radius:8px;border:1px solid var(--border);transition:.2s}
+    .back:hover{color:var(--text);border-color:var(--red);background:rgba(229,57,53,.08)}
+    .brand{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+    .search-btn{background:none;border:1px solid var(--border);color:var(--muted);
+      width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:16px;
+      display:flex;align-items:center;justify-content:center;transition:.2s}
+    .search-btn:hover{border-color:var(--red);color:var(--text)}
+
+    /* SEARCH OVERLAY */
+    #search-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;
+      align-items:flex-start;justify-content:center;padding-top:80px}
+    #search-ov.on{display:flex}
+    .search-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+      padding:20px;width:90%;max-width:520px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+    .search-close{float:right;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;margin-bottom:10px}
+    .search-box input{width:100%;background:var(--bg2);border:1px solid var(--border);
+      border-radius:10px;padding:12px 16px;color:var(--text);font-family:inherit;font-size:16px;outline:none}
+    .search-box input:focus{border-color:var(--red)}
+
+    /* HERO */
+    .hero{position:relative;height:240px;display:flex;align-items:center;
+      justify-content:center;flex-direction:column;text-align:center;overflow:hidden}
+    .hero-bg{position:absolute;inset:0;
+      background:radial-gradient(ellipse at 20% 50%,rgba(229,57,53,.35) 0%,transparent 60%),
+                radial-gradient(ellipse at 80% 30%,rgba(47,134,247,.3) 0%,transparent 60%),
+                linear-gradient(180deg,#0a0f1a 0%,#0d1117 100%)}
+    .particles{position:absolute;inset:0;pointer-events:none}
+    .particles span{position:absolute;width:2px;height:2px;background:rgba(255,255,255,.7);
+      border-radius:50%;animation:twinkle 3s ease-in-out infinite}
+    @keyframes twinkle{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:1;transform:scale(2)}}
+    .hero-content{position:relative;z-index:2}
+    .hero-title{font-size:clamp(1.8rem,5vw,3rem);font-weight:700;color:#fff;
+      text-shadow:0 2px 20px rgba(0,0,0,.5)}
+    .hero-line{width:100px;height:4px;background:var(--red);border-radius:2px;margin:10px auto 12px}
+    .hero-sub{font-size:14px;color:rgba(255,255,255,.6)}
+
+    /* FILTERS */
+    .filters{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 20px}
+    .filters-inner{max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px}
+    .fbtn{background:transparent;border:2px solid var(--red);color:var(--text);
+      padding:5px 16px;border-radius:8px;font-family:inherit;font-size:13px;font-weight:500;
+      cursor:pointer;transition:.2s;white-space:nowrap}
+    .fbtn:hover,.fbtn.active{background:var(--red);color:#fff;transform:translateY(-1px);
+      box-shadow:0 4px 14px rgba(229,57,53,.4)}
+
+    /* MAIN */
+    .main{max-width:1100px;margin:0 auto;padding:24px 20px 60px}
+    .sec-hdr{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+    .sec-title{font-size:17px;font-weight:600}
+    .sec-count{background:var(--surface);border:1px solid var(--border);
+      color:var(--muted);font-size:12px;padding:2px 10px;border-radius:20px}
+
+    /* CARDS */
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+      overflow:hidden;text-decoration:none;color:var(--text);display:flex;flex-direction:column;
+      transition:transform .22s,box-shadow .22s,border-color .22s;
+      animation:fadeUp .4s ease both}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    .card:nth-child(1){animation-delay:.05s}.card:nth-child(2){animation-delay:.10s}
+    .card:nth-child(3){animation-delay:.15s}.card:nth-child(4){animation-delay:.20s}
+    .card:nth-child(5){animation-delay:.25s}.card:nth-child(6){animation-delay:.30s}
+    .card:nth-child(7){animation-delay:.35s}.card:nth-child(8){animation-delay:.40s}
+    .card:hover{transform:translateY(-6px);box-shadow:0 14px 40px rgba(0,0,0,.5);border-color:var(--red)}
+    .thumb{width:100%;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;
+      font-size:3.8rem;background:linear-gradient(135deg,var(--bg2),var(--surface))}
+    .card-body{padding:12px 14px 14px;flex:1;display:flex;flex-direction:column;gap:6px}
+    .card-name{font-size:14px;font-weight:600;line-height:1.4}
+    .card-desc{font-size:12px;color:var(--muted);line-height:1.5;flex:1}
+    .card-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+    .tag{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500}
+    .t-thai{background:rgba(229,57,53,.15);color:#ef9a9a;border:1px solid rgba(229,57,53,.3)}
+    .t-math{background:rgba(47,134,247,.15);color:#90caf9;border:1px solid rgba(47,134,247,.3)}
+    .t-tech{background:rgba(0,188,212,.15);color:#80deea;border:1px solid rgba(0,188,212,.3)}
+
+    /* EMPTY */
+    .empty{text-align:center;padding:60px 20px;color:var(--muted);display:none}
+    .empty.on{display:block}
+
+    /* FOOTER */
+    footer{background:var(--bg2);border-top:1px solid var(--border);
+      text-align:center;padding:18px;font-size:13px;color:var(--muted)}
+
+    @media(max-width:600px){
+      .hero{height:190px}
+      .grid{grid-template-columns:repeat(2,1fr);gap:12px}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-left">
+    <a class="back" href="../index.html">← หน้าหลัก</a>
+    <div class="brand">🏫 โรงเรียนบ้านคำไผ่</div>
+  </div>
+  <button class="search-btn" onclick="toggleSearch()">🔍</button>
+</nav>
+
+<!-- SEARCH -->
+<div id="search-ov">
+  <div class="search-box">
+    <button class="search-close" onclick="toggleSearch()">✕</button>
+    <input id="q" type="text" placeholder="ค้นหาเกมส์..." oninput="render()" />
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="particles" id="pts"></div>
+  <div class="hero-content">
+    <h1 class="hero-title">🎮 เกมส์การเรียนรู้</h1>
+    <div class="hero-line"></div>
+    <p class="hero-sub">เรียนรู้อย่างสนุก • ฝึกทักษะทุกวิชา • โรงเรียนบ้านคำไผ่</p>
+  </div>
+</section>
+
+<!-- FILTERS -->
+<div class="filters">
+  <div class="filters-inner">
+    <button class="fbtn active" onclick="setF('all',this)">ทั้งหมด</button>
+    <button class="fbtn" onclick="setF('thai',this)">🇹🇭 ภาษาไทย</button>
+    <button class="fbtn" onclick="setF('math',this)">🔢 คณิตศาสตร์</button>
+    <button class="fbtn" onclick="setF('tech',this)">💻 เทคโนโลยี</button>
+  </div>
+</div>
+
+<main class="main">
+  <div class="sec-hdr">
+    <span class="sec-title" id="sec-title">เกมส์ทั้งหมด</span>
+    <span class="sec-count" id="cnt">0 เกมส์</span>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty">🔍 ไม่พบเกมส์ที่ค้นหา</div>
+</main>
+
+<footer>โรงเรียนบ้านคำไผ่ — ระบบบริหารจัดการโรงเรียนออนไลน์ &nbsp;|&nbsp; 🎮 เกมส์การเรียนรู้</footer>
+
+<script>
+const GAMES = [
+  { name:"ตกปลามาตราตัวสะกด", cat:"thai", icon:"🎣", url:"thai/fishing.html",    desc:"ตกปลาตามมาตราตัวสะกด ฝึกภาษาไทยอย่างสนุก" },
+  { name:"Flappy Bird มาตรา",   cat:"thai", icon:"🐦", url:"thai/flappy-bird.html", desc:"บินเก็บคำตามมาตราตัวสะกดที่ถูกต้อง" },
+  { name:"Attack on คำนาม",    cat:"thai", icon:"⚔️", url:"thai/attack-noun.html",  desc:"โจมตีคำนาม! คลิกคำที่เป็นคำนามให้ถูกต้อง" },
+  { name:"Math Jumper",         cat:"math", icon:"🦘", url:"math/math-jumper.html",  desc:"กระโดดผ่านด่านด้วยการตอบโจทย์คณิตศาสตร์" },
+  { name:"Pizza เศษส่วน",      cat:"math", icon:"🍕", url:"math/pizza.html",         desc:"เรียนรู้เศษส่วนผ่านการแบ่งพิซซ่า" },
+  { name:"เกม 24",              cat:"math", icon:"🃏", url:"math/game24.html",        desc:"ใช้ 4 ตัวเลขทำให้ได้ 24 ท้าทายสมอง!" },
+  { name:"ฝึกพิมพ์",            cat:"tech", icon:"⌨️", url:"tech/typing.html",        desc:"ฝึกพิมพ์สัมผัสทั้งภาษาไทยและอังกฤษ" },
+  { name:"Blockly Games",       cat:"tech", icon:"🧩", url:"tech/blockly.html",       desc:"เรียนรู้การเขียนโปรแกรมด้วย Blockly ง่ายๆ" },
+];
+
+let filter="all", q="";
+
+function render(){
+  q=(document.getElementById("q")||{}).value?.trim().toLowerCase()||"";
+  const data=GAMES.filter(g=>(filter==="all"||g.cat===filter)&&(!q||g.name.includes(q)||g.desc.includes(q)));
+  document.getElementById("cnt").textContent=`${data.length} เกมส์`;
+  const grid=document.getElementById("grid");
+  const empty=document.getElementById("empty");
+  if(!data.length){grid.innerHTML="";empty.classList.add("on");return}
+  empty.classList.remove("on");
+  grid.innerHTML=data.map(g=>`
+    <a class="card" href="${g.url}">
+      <div class="thumb">${g.icon}</div>
+      <div class="card-body">
+        <div class="card-name">${g.name}</div>
+        <div class="card-desc">${g.desc}</div>
+        <div class="card-tags"><span class="tag t-${g.cat}">${catLabel(g.cat)}</span></div>
+      </div>
+    </a>`).join("");
+}
+
+function catLabel(c){return{thai:"ภาษาไทย",math:"คณิตศาสตร์",tech:"เทคโนโลยี"}[c]||c}
+
+function setF(f,btn){
+  filter=f;
+  document.querySelectorAll(".fbtn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  const t={all:"เกมส์ทั้งหมด",thai:"ภาษาไทย",math:"คณิตศาสตร์",tech:"เทคโนโลยี"};
+  document.getElementById("sec-title").textContent=t[f]||"เกมส์";
+  render();
+}
+
+function toggleSearch(){
+  const ov=document.getElementById("search-ov");
+  ov.classList.toggle("on");
+  if(ov.classList.contains("on"))setTimeout(()=>document.getElementById("q").focus(),100);
+}
+document.getElementById("search-ov").addEventListener("click",e=>{if(e.target.id==="search-ov")toggleSearch()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("search-ov").classList.contains("on"))toggleSearch()});
+
+// Particles
+(function(){
+  const c=document.getElementById("pts");
+  for(let i=0;i<35;i++){
+    const s=document.createElement("span");
+    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;
+      animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*3}s;
+      width:${1+Math.random()*2}px;height:${1+Math.random()*2}px`;
+    c.appendChild(s);
+  }
+})();
+
+render();
+</script>
+</body>
+</html>

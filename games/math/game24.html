@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>เกม 24 — บ้านคำไผ่</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#0d1117;--bg2:#161b22;--surface:#1c2128;--border:#30363d;
+          --text:#e6edf3;--muted:#8b949e;--yellow:#ffd700;--red:#e53935;--green:#3fb950}
+    body{font-family:'Kanit',sans-serif;background:var(--bg);color:var(--text);
+      min-height:100vh;display:flex;flex-direction:column}
+
+    /* NAV */
+    .nav{background:rgba(13,17,23,.92);backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--border);display:flex;align-items:center;
+      justify-content:space-between;padding:0 16px;height:50px;position:sticky;top:0;z-index:10}
+    .back{text-decoration:none;color:var(--muted);font-size:13px;padding:4px 12px;
+      border:1px solid var(--border);border-radius:8px;transition:.2s}
+    .back:hover{color:var(--text);border-color:var(--red)}
+    .nav-title{font-weight:700;font-size:16px}
+
+    /* MAIN */
+    main{flex:1;display:flex;flex-direction:column;align-items:center;
+      justify-content:center;padding:20px;gap:20px}
+
+    /* HUD */
+    .hud{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+    .hud-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:8px 22px;text-align:center;min-width:90px}
+    .hud-val{font-size:1.6rem;font-weight:700}
+    .hud-label{font-size:11px;color:var(--muted);display:block}
+    .hud-val.yellow{color:var(--yellow)}
+    .hud-val.green{color:var(--green)}
+
+    /* CARDS AREA */
+    .cards-area{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+    .num-card{background:linear-gradient(135deg,#1f3052,#162840);
+      border:2px solid #2f86f7;border-radius:16px;width:80px;height:80px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:2.2rem;font-weight:700;cursor:pointer;transition:.2s;
+      box-shadow:0 4px 16px rgba(47,134,247,.3);user-select:none}
+    .num-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(47,134,247,.5)}
+    .num-card.used{opacity:.35;cursor:not-allowed;transform:none}
+    .num-card.selected{border-color:var(--yellow);box-shadow:0 0 20px rgba(255,215,0,.5);
+      background:linear-gradient(135deg,#3a3000,#2a2000)}
+
+    /* OPERATORS */
+    .ops{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .op-btn{background:var(--surface);border:2px solid var(--border);color:var(--text);
+      width:52px;height:52px;border-radius:12px;font-size:1.4rem;font-weight:700;
+      cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center}
+    .op-btn:hover{border-color:#8957e5;background:rgba(137,87,229,.15);transform:translateY(-2px)}
+    .op-btn.selected{border-color:#8957e5;background:rgba(137,87,229,.25);
+      box-shadow:0 0 14px rgba(137,87,229,.4)}
+
+    /* EXPRESSION DISPLAY */
+    .expr-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;
+      padding:14px 24px;min-width:280px;text-align:center;min-height:56px;
+      font-size:1.4rem;font-weight:600;color:var(--yellow);letter-spacing:.05em;
+      display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+    .expr-token{background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);
+      border-radius:8px;padding:2px 10px;font-size:1.1rem}
+
+    /* BUTTONS */
+    .btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+    .btn{border:none;border-radius:12px;padding:10px 24px;font-family:inherit;
+      font-size:14px;font-weight:600;cursor:pointer;transition:.2s}
+    .btn-check{background:var(--green);color:#000}
+    .btn-check:hover{background:#51c86a;transform:translateY(-2px)}
+    .btn-clear{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+    .btn-clear:hover{background:#30363d;transform:translateY(-2px)}
+    .btn-hint{background:#8957e5;color:#fff}
+    .btn-hint:hover{background:#a47bf0;transform:translateY(-2px)}
+    .btn-new{background:var(--red);color:#fff}
+    .btn-new:hover{background:#b71c1c;transform:translateY(-2px)}
+
+    /* FEEDBACK */
+    .feedback{text-align:center;font-size:1rem;font-weight:600;min-height:28px;border-radius:10px;padding:6px 20px;transition:.3s}
+    .feedback.correct{color:#81c784;background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.3)}
+    .feedback.wrong{color:#ef9a9a;background:rgba(229,57,53,.1);border:1px solid rgba(229,57,53,.3)}
+    .feedback.info{color:#90caf9;background:rgba(47,134,247,.1);border:1px solid rgba(47,134,247,.3)}
+
+    /* GUIDE */
+    .guide{color:var(--muted);font-size:13px;text-align:center;line-height:1.8;
+      background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px 20px;max-width:400px}
+
+    /* MODAL */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;
+      display:flex;align-items:center;justify-content:center;display:none}
+    .modal.on{display:flex}
+    .modal-panel{background:var(--surface);border:1px solid var(--border);border-radius:20px;
+      padding:30px 36px;text-align:center;max-width:380px;width:90%}
+    .modal-panel h2{font-size:1.8rem;margin-bottom:8px}
+    .score-big{font-size:3rem;font-weight:700;color:var(--yellow);margin:12px 0}
+
+    @media(max-width:500px){
+      .num-card{width:68px;height:68px;font-size:1.8rem}
+      .expr-box{font-size:1.1rem;min-width:220px}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="back" href="../index.html">← กลับ</a>
+  <span class="nav-title">🃏 เกม 24</span>
+  <span style="width:60px"></span>
+</nav>
+
+<main>
+  <!-- HUD -->
+  <div class="hud">
+    <div class="hud-item">
+      <span class="hud-val yellow" id="score">0</span>
+      <span class="hud-label">คะแนน</span>
+    </div>
+    <div class="hud-item">
+      <span class="hud-val green" id="timer">60</span>
+      <span class="hud-label">วินาที</span>
+    </div>
+    <div class="hud-item">
+      <span class="hud-val" id="round">1</span>
+      <span class="hud-label">โจทย์</span>
+    </div>
+  </div>
+
+  <!-- CARDS -->
+  <div class="cards-area" id="cards"></div>
+
+  <!-- OPERATOR BUTTONS -->
+  <div class="ops">
+    <button class="op-btn" id="op-add" onclick="selectOp('+')">+</button>
+    <button class="op-btn" id="op-sub" onclick="selectOp('-')">−</button>
+    <button class="op-btn" id="op-mul" onclick="selectOp('×')">×</button>
+    <button class="op-btn" id="op-div" onclick="selectOp('÷')">÷</button>
+    <button class="op-btn" id="op-lp"  onclick="selectOp('(')">( )</button>
+  </div>
+
+  <!-- EXPRESSION -->
+  <div class="expr-box" id="expr">คลิกตัวเลขและเครื่องหมาย</div>
+
+  <!-- FEEDBACK -->
+  <div class="feedback" id="fb"></div>
+
+  <!-- BUTTONS -->
+  <div class="btns">
+    <button class="btn btn-check" onclick="checkAnswer()">✓ ตรวจคำตอบ</button>
+    <button class="btn btn-clear" onclick="clearExpr()">✕ ล้าง</button>
+    <button class="btn btn-hint" onclick="showHint()">💡 Hint</button>
+    <button class="btn btn-new" onclick="newPuzzle()">🔀 ข้ามโจทย์</button>
+  </div>
+
+  <!-- GUIDE -->
+  <div class="guide">
+    ใช้ตัวเลข 4 ตัว • บวก ลบ คูณ หาร ให้ได้ผลลัพธ์ = <strong>24</strong><br/>
+    คลิกตัวเลข → เครื่องหมาย → ตัวเลข → ตรวจคำตอบ<br/>
+    ปุ่ม ( ) ใช้ใส่วงเล็บ
+  </div>
+</main>
+
+<!-- MODAL GAME OVER -->
+<div class="modal" id="modal">
+  <div class="modal-panel">
+    <h2>⏰ หมดเวลา!</h2>
+    <div class="score-big" id="final-score">0</div>
+    <p style="color:var(--muted);margin-bottom:16px">คะแนนสุดท้าย</p>
+    <button class="btn btn-check" onclick="restartGame()" style="margin:4px">🔄 เล่นใหม่</button>
+    <button class="btn btn-clear" onclick="window.location.href='../index.html'" style="margin:4px">🏠 กลับ</button>
+  </div>
+</div>
+
+<script>
+let nums=[], tokens=[], selectedOp=null, score=0, timeLeft=60, roundN=1, timerID=null;
+let parenOpen=0;
+
+// ====== PUZZLE GENERATION ======
+function solvable24(a){
+  // Try all permutations and ops to check if 24 is achievable
+  const ops=['+','-','*','/'];
+  const perms=permutations(a);
+  for(const p of perms){
+    for(const o1 of ops) for(const o2 of ops) for(const o3 of ops){
+      const exprs=[
+        `((${p[0]}${o1}${p[1]})${o2}${p[2]})${o3}${p[3]}`,
+        `(${p[0]}${o1}(${p[1]}${o2}${p[2]}))${o3}${p[3]}`,
+        `(${p[0]}${o1}${p[1]})${o2}(${p[2]}${o3}${p[3]})`,
+        `${p[0]}${o1}((${p[1]}${o2}${p[2]})${o3}${p[3]})`,
+        `${p[0]}${o1}(${p[1]}${o2}(${p[2]}${o3}${p[3]}))`,
+      ];
+      for(const ex of exprs){
+        try{if(Math.abs(eval(ex)-24)<0.0001) return ex;}catch(e){}
+      }
+    }
+  }
+  return null;
+}
+
+function permutations(arr){
+  if(arr.length<=1) return [arr];
+  const res=[];
+  arr.forEach((v,i)=>{
+    const rest=[...arr.slice(0,i),...arr.slice(i+1)];
+    permutations(rest).forEach(p=>res.push([v,...p]));
+  });
+  return res;
+}
+
+function newPuzzle(skip=false){
+  if(skip && score>0) score=Math.max(0,score-3);
+  tokens=[];selectedOp=null;parenOpen=0;
+  let tries=0, sol=null;
+  do{
+    nums=Array.from({length:4},()=>1+Math.floor(Math.random()*9));
+    sol=solvable24([...nums]);
+    tries++;
+  }while(!sol&&tries<200);
+  if(!sol) nums=[1,2,3,4]; // fallback
+  document.getElementById("round").textContent=roundN;
+  renderCards();
+  renderExpr();
+  setFeedback("","");
+}
+
+function renderCards(){
+  const el=document.getElementById("cards");
+  el.innerHTML=nums.map((n,i)=>
+    `<div class="num-card" id="card-${i}" onclick="selectNum(${i},${n})">${n}</div>`
+  ).join("");
+}
+
+function renderExpr(){
+  const el=document.getElementById("expr");
+  if(!tokens.length){el.textContent="คลิกตัวเลขและเครื่องหมาย";return}
+  el.innerHTML=tokens.map(t=>`<span class="expr-token">${t}</span>`).join(" ");
+}
+
+// ====== INTERACTION ======
+function selectNum(i,v){
+  const card=document.getElementById(`card-${i}`);
+  if(card.classList.contains("used")) return;
+  // check if last token was a number — need op in between
+  const last=tokens[tokens.length-1];
+  if(last && !'+-×÷('.includes(last)) return setFeedback("ใส่เครื่องหมายก่อน","wrong");
+  tokens.push(String(v));
+  card.classList.add("used");
+  renderExpr();
+  clearOp();
+}
+
+function selectOp(op){
+  if(op==='('){
+    // toggle bracket mode
+    const last=tokens[tokens.length-1];
+    if(!last || '+-×÷('.includes(last)){
+      tokens.push('('); parenOpen++;
+    } else {
+      if(parenOpen>0){tokens.push(')');parenOpen--;}
+    }
+    renderExpr(); clearOp(); return;
+  }
+  const last=tokens[tokens.length-1];
+  if(!last || '+-×÷('.includes(last)) return setFeedback("ต้องใส่ตัวเลขก่อน","wrong");
+  if(tokens.length && ')+-×÷'.includes(tokens[tokens.length-1][0]) && op) {
+    // replace last op
+    if('+-×÷'.includes(tokens[tokens.length-1])) tokens.pop();
+  }
+  selectedOp=op;
+  tokens.push(op);
+  renderExpr();
+  document.querySelectorAll(".op-btn").forEach(b=>b.classList.remove("selected"));
+  document.getElementById({'+':'op-add','-':'op-sub','×':'op-mul','÷':'op-div'}[op]).classList.add("selected");
+}
+
+function clearOp(){ selectedOp=null; document.querySelectorAll(".op-btn").forEach(b=>b.classList.remove("selected")); }
+
+function clearExpr(){
+  tokens=[]; selectedOp=null; parenOpen=0;
+  document.querySelectorAll(".num-card").forEach(c=>c.classList.remove("used","selected"));
+  renderExpr(); setFeedback("","");
+}
+
+function checkAnswer(){
+  const expr=tokens.join(" ").replace(/×/g,"*").replace(/÷/g,"/");
+  // check all nums used
+  const usedNums=tokens.filter(t=>/^\d+$/.test(t)).map(Number);
+  const sortedUsed=[...usedNums].sort((a,b)=>a-b);
+  const sortedNums=[...nums].sort((a,b)=>a-b);
+  if(JSON.stringify(sortedUsed)!==JSON.stringify(sortedNums)){
+    return setFeedback("❌ ต้องใช้ตัวเลขทั้ง 4 ตัว!","wrong");
+  }
+  try{
+    const result=eval(expr);
+    if(Math.abs(result-24)<0.0001){
+      score+=10+Math.floor(timeLeft/6);
+      roundN++;
+      updateHUD();
+      setFeedback("🎉 ถูกต้อง! +10 คะแนน","correct");
+      setTimeout(()=>newPuzzle(),1200);
+    } else {
+      setFeedback(`❌ ได้ ${result.toFixed(2)} ≠ 24 ลองใหม่นะ`,"wrong");
+    }
+  } catch(e){
+    setFeedback("❌ สูตรไม่ถูกต้อง ตรวจสอบอีกครั้ง","wrong");
+  }
+}
+
+function showHint(){
+  const sol=solvable24([...nums]);
+  if(sol){
+    const pretty=sol.replace(/\*/g,"×").replace(/\//g,"÷");
+    setFeedback("💡 힌트: "+pretty,"info");
+    score=Math.max(0,score-5);
+    updateHUD();
+  } else setFeedback("ไม่มีคำตอบสำหรับโจทย์นี้","info");
+}
+
+function setFeedback(msg,cls){
+  const el=document.getElementById("fb");
+  el.textContent=msg;
+  el.className="feedback"+(cls?" "+cls:"");
+}
+
+function updateHUD(){
+  document.getElementById("score").textContent=score;
+  document.getElementById("timer").textContent=timeLeft;
+}
+
+// ====== TIMER ======
+function startTimer(){
+  clearInterval(timerID);
+  timerID=setInterval(()=>{
+    timeLeft--;
+    document.getElementById("timer").textContent=timeLeft;
+    if(timeLeft<=0){
+      clearInterval(timerID);
+      document.getElementById("final-score").textContent=score;
+      document.getElementById("modal").classList.add("on");
+    }
+  },1000);
+}
+
+function restartGame(){
+  score=0; timeLeft=60; roundN=1;
+  document.getElementById("modal").classList.remove("on");
+  updateHUD(); newPuzzle(); startTimer();
+}
+
+// ====== INIT ======
+newPuzzle();
+startTimer();
+</script>
+</body>
+</html>
