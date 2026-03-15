@@ -477,9 +477,11 @@ async function loadTokenFromFirebase(){
   try{
     const snap=await db.ref(TOKEN_PATH).get();
     if(snap.exists()&&snap.val()){
-      GH_TOKEN=snap.val().trim();
+      // ถอดรหัส base64 ที่เก็บไว้
+      try{ GH_TOKEN=atob(snap.val()).trim(); }
+      catch(e){ GH_TOKEN=snap.val().trim(); } // fallback กรณี token เก่าที่ยังไม่ได้ encode
       dot.className='token-dot ok';
-      txt.textContent='Token พร้อมใช้งาน ✓';
+      txt.textContent=`Token พร้อมใช้งาน ✓ (length:${GH_TOKEN.length})`;
     } else {
       GH_TOKEN='';
       dot.className='token-dot missing';
@@ -549,17 +551,15 @@ async function saveToken(){
   const err=document.getElementById('token-err');
   err.textContent='';
   if(!val){err.textContent='กรุณากรอก Token';return;}
-  if(!val.startsWith('ghp_')&&!val.startsWith('github_pat_')){
-    err.textContent='Token ไม่ถูกรูปแบบ (ควรขึ้นต้นด้วย ghp_ หรือ github_pat_)';return;
-  }
   try{
-    await db.ref(TOKEN_PATH).set(val.trim());
-    GH_TOKEN=val.trim();
+    // เข้ารหัส base64 ก่อนเก็บ เพื่อป้องกัน Firebase ตัดค่า
+    const encoded=btoa(val);
+    await db.ref(TOKEN_PATH).set(encoded);
+    GH_TOKEN=val;
     closeModal('token-modal');
     openModal('admin-modal');
-    // อัปเดต status bar
     document.getElementById('token-dot').className='token-dot ok';
-    document.getElementById('token-status-text').textContent='Token พร้อมใช้งาน ✓';
+    document.getElementById('token-status-text').textContent=`Token พร้อมใช้งาน ✓ (length:${val.length})`;
   }catch(e){
     err.textContent='บันทึกไม่สำเร็จ: '+e.message;
   }
