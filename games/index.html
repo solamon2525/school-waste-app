@@ -235,8 +235,17 @@
     </div>
 
     <div class="form-group">
-      <label>ชื่อไฟล์ (.html)</label>
-      <input class="form-input" id="gh-filename" placeholder="เช่น attack-noun.html" oninput="updatePathPreview()" />
+      <label>ชื่อเกม (ภาษาไทย)</label>
+      <div style="display:flex;gap:8px">
+        <input class="form-input" id="gh-gamename-th" placeholder="เช่น ตกปลามาตราตัวสะกด" oninput="onGameNameThInput()" style="flex:1" />
+        <button class="btn btn-outline btn-sm" id="slug-btn" onclick="generateSlug()" style="white-space:nowrap;padding:0 14px">✨ แปลงชื่อ</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>ชื่อไฟล์ (.html) <span style="font-size:11px;color:var(--muted)">— จะถูกสร้างอัตโนมัติ หรือพิมพ์เองได้</span></label>
+      <input class="form-input" id="gh-filename" placeholder="เช่น fishing-spelling.html" oninput="updatePathPreview()" />
+      <div id="slug-status" style="font-size:12px;color:var(--muted);margin-top:4px;display:none"></div>
       <div class="path-preview" id="path-preview">📁 games/thai/</div>
     </div>
 
@@ -385,6 +394,26 @@
 <script>
 const REPO_OWNER = 'solamon2525';
 const REPO_NAME  = 'kampai-school-app';
+const SITE_BASE  = 'https://kampai-school-app.vercel.app'; // base URL ของเว็บ
+
+// แปลงชื่อไฟล์ให้เป็น URL-safe (ลบช่องว่าง/ภาษาไทย → slug)
+function slugify(str){
+  return str.trim()
+    .replace(/\s+/g,'-')
+    .replace(/[^\w\-\.]/g,'')  // เอาเฉพาะ a-z 0-9 - _ .
+    .replace(/\-+/g,'-')
+    .toLowerCase();
+}
+
+// สร้าง play URL จาก path (ไม่ให้ซ้ำ games/)
+function buildPlayUrl(path){
+  if(!path)return '#';
+  // ถ้าเป็น external link ให้ใช้ตรงๆ
+  if(path.startsWith('http'))return path;
+  // ป้องกัน path ซ้ำ เช่น games/games/thai/
+  const clean=path.replace(/^\/+/,''); // ตัด leading slash
+  return `${SITE_BASE}/${clean}`;
+}
 // Firebase path สำหรับเก็บ token — อ่านได้เฉพาะ authenticated user (ตั้ง Rules ให้ถูกต้อง)
 const TOKEN_PATH = 'admin_config/gh_token';
 
@@ -731,7 +760,7 @@ function openEditModal(id){
     urlInfo.style.display='block';
     document.getElementById('edit-original-url-display').textContent=g.url;
     const playUrl=isLocal
-      ?`https://${REPO_OWNER}.github.io/${REPO_NAME}/${g.url}`
+      ?buildPlayUrl(g.url)
       :g.url;
     const playLink=document.getElementById('edit-play-link');
     playLink.href=playUrl;
@@ -831,13 +860,13 @@ async function pushEditedHtml(){
       document.getElementById('edit-original-url').value=newUrl;
       // อัปเดตปุ่มเปิดเล่น
       document.getElementById('edit-original-url-display').textContent=newUrl;
-      const playUrl=`https://${REPO_OWNER}.github.io/${REPO_NAME}/${newUrl}`;
+      const playUrl=buildPlayUrl(newUrl);
       document.getElementById('edit-play-link').href=playUrl;
       document.getElementById('edit-rename-warn').style.display='none';
     }
 
     const finalUrl=isRename?newUrl:origUrl;
-    const pageUrl=`https://${REPO_OWNER}.github.io/${REPO_NAME}/${finalUrl}`;
+    const pageUrl=buildPlayUrl(finalUrl);
     statusEl.className='push-status success';
     statusEl.innerHTML=`✅ ${isRename?'เปลี่ยนชื่อและบันทึก':'บันทึก'}สำเร็จ!<br>
       <a href="${pageUrl}" target="_blank" style="color:#3fb950;font-size:12px">▶ เปิดเล่นทันที: ${finalUrl}</a>`;
@@ -862,7 +891,7 @@ async function saveGameData(){
   // อัปเดตลิงก์เปิดเล่น
   const isLocal=url&&!url.startsWith('http');
   if(isLocal){
-    const playUrl=`https://${REPO_OWNER}.github.io/${REPO_NAME}/${url}`;
+    const playUrl=buildPlayUrl(url);
     document.getElementById('edit-play-link').href=playUrl;
     document.getElementById('edit-original-url-display').textContent=url;
     document.getElementById('edit-original-url').value=url;
@@ -881,16 +910,78 @@ async function deleteGame(){
 function openGameById(id){const g=GAMES.find(x=>x.id===id);if(g)openGame(g)}
 function openGame(g){
   if(!g.url)return;
-  if(!g.url.startsWith('http'))window.location.href=g.url;
-  else window.open(g.url,'_blank');
+  if(g.url.startsWith('http'))window.open(g.url,'_blank');
+  else window.open(buildPlayUrl(g.url),'_blank');
 }
 
-/* ─── PATH PREVIEW ─── */
+/* ─── AUTO SLUG ─── */
+function onGameNameThInput(){
+  // ถ้าช่องชื่อไฟล์ว่างอยู่ → auto trigger หลัง pause พิมพ์
+  clearTimeout(window._slugTimer);
+  const val=document.getElementById('gh-gamename-th').value.trim();
+  if(!val)return;
+  window._slugTimer=setTimeout(()=>generateSlug(),900);
+}
+
+async function generateSlug(){
+  const nameTh=document.getElementById('gh-gamename-th').value.trim();
+  if(!nameTh){return;}
+  const btn=document.getElementById('slug-btn');
+  const statusEl=document.getElementById('slug-status');
+  btn.disabled=true;btn.textContent='⏳';
+  statusEl.style.display='block';
+  statusEl.style.color='var(--muted)';
+  statusEl.textContent='กำลังแปลงชื่อ...';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:100,
+        messages:[{
+          role:'user',
+          content:`Convert this Thai game name to a short English filename slug (lowercase, hyphens only, no spaces, no special chars, max 4 words, no extension): "${nameTh}"\nReply with ONLY the slug, nothing else.`
+        }]
+      })
+    });
+    const data=await res.json();
+    const slug=(data.content?.[0]?.text||'').trim().toLowerCase()
+      .replace(/[^a-z0-9-]/g,'').replace(/-+/g,'-').replace(/^-|-$/g,'');
+    if(slug){
+      const fname=slug.endsWith('.html')?slug:slug+'.html';
+      document.getElementById('gh-filename').value=fname;
+      updatePathPreview();
+      statusEl.style.color='#3fb950';
+      statusEl.textContent=`✅ ได้ชื่อ: ${fname}`;
+      // sync ชื่อเกมไปยัง aap-name ด้วย
+      document.getElementById('aap-name') && (document.getElementById('aap-name').value=nameTh);
+    } else {
+      statusEl.style.color='#ff7b72';
+      statusEl.textContent='❌ แปลงไม่สำเร็จ กรุณาพิมพ์ชื่อไฟล์เอง';
+    }
+  }catch(e){
+    statusEl.style.color='#ff7b72';
+    statusEl.textContent='❌ '+e.message;
+  }
+  btn.disabled=false;btn.textContent='✨ แปลงชื่อ';
+}
+
+
 function updatePathPreview(){
   const folder=document.getElementById('gh-folder').value;
   let fname=document.getElementById('gh-filename').value.trim();
-  if(!fname)fname='ชื่อไฟล์.html';
-  else if(!fname.endsWith('.html'))fname+='.html';
+  if(!fname){
+    document.getElementById('path-preview').textContent=`📁 ${folder}/`;
+    return;
+  }
+  // auto slugify ถ้ามีภาษาไทยหรือช่องว่าง
+  if(!fname.endsWith('.html'))fname+='.html';
+  const slug=slugify(fname);
+  if(slug!==fname){
+    document.getElementById('gh-filename').value=slug;
+    fname=slug;
+  }
   document.getElementById('path-preview').textContent=`📁 ${folder}/${fname}`;
 }
 
@@ -911,6 +1002,7 @@ async function pushToGitHub(){
   }
 
   if(!fname.endsWith('.html'))fname+='.html';
+  fname=slugify(fname); // ← sanitize ชื่อไฟล์ก่อน push
   const filePath=`${folder}/${fname}`;
   const apiUrl=`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`;
 
@@ -939,14 +1031,18 @@ async function pushToGitHub(){
     if(res.ok){
       const filePath2=filePath; // capture
       statusEl.className='push-status success';
-      const pageUrl=`https://${REPO_OWNER}.github.io/${REPO_NAME}/${filePath}`;
+      const pageUrl=buildPlayUrl(filePath);
       statusEl.innerHTML=`✅ อัปโหลดสำเร็จ! <a href="${pageUrl}" target="_blank" style="color:#3fb950;font-size:12px">🌐 เปิดไฟล์</a>`;
+      // เก็บชื่อไทยก่อน clear
+      const nameTh=document.getElementById('gh-gamename-th').value.trim();
       document.getElementById('gh-filename').value='';
       document.getElementById('gh-code').value='';
+      document.getElementById('gh-gamename-th').value='';
+      document.getElementById('slug-status').style.display='none';
       updatePathPreview();
       // เปิด popup ให้เพิ่มเกมในรายการ
-      document.getElementById('aap-file-path').value=filePath2;
-      document.getElementById('aap-name').value=fname.replace('.html','').replace(/-/g,' ');
+      document.getElementById('aap-file-path').value=filePath;
+      document.getElementById('aap-name').value=nameTh||fname.replace('.html','').replace(/-/g,' ');
       // ตั้ง folder → cat
       const folderCat={'games/thai':'thai','games/math':'math','games/tech':'tech','games/other':'other'};
       document.getElementById('aap-cat').value=folderCat[folder]||'other';
