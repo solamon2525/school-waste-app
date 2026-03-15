@@ -149,6 +149,45 @@
     .token-dot.missing{background:#ff7b72;box-shadow:0 0 6px #ff7b72}
     .token-info{display:flex;align-items:center;flex:1}
     .token-note{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.6}
+
+    /* ── FEATURED BADGE ── */
+    .card.featured{border-color:rgba(255,193,7,.5);box-shadow:0 0 16px rgba(255,193,7,.15)}
+    .featured-badge{position:absolute;top:8px;left:8px;background:#ffc107;color:#000;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;z-index:2;letter-spacing:.02em}
+    .featured-pin{font-size:10px;color:#ffc107;margin-top:2px}
+    /* ── SCHEDULED BADGE ── */
+    .card.scheduled{opacity:.5;pointer-events:none}
+    .scheduled-badge{position:absolute;top:8px;right:8px;background:rgba(13,17,23,.85);color:#8b949e;font-size:10px;padding:2px 8px;border-radius:20px;border:1px solid var(--border);z-index:2}
+    /* ── RANDOM BTN ── */
+    .random-btn{background:linear-gradient(135deg,#7c3aed,#e53935);border:none;color:#fff;padding:6px 14px;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.2s;white-space:nowrap;flex-shrink:0}
+    .random-btn:hover{opacity:.85;transform:scale(1.04)}
+    /* ── HISTORY STRIP ── */
+    .history-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 20px;display:none}
+    .history-bar.on{display:block}
+    .history-inner{max-width:1100px;margin:0 auto}
+    .history-label{font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+    .history-cards{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+    .history-cards::-webkit-scrollbar{height:3px}
+    .history-cards::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+    .hcard{flex-shrink:0;width:60px;cursor:pointer;border-radius:8px;overflow:hidden;border:1px solid var(--border);transition:.2s;position:relative}
+    .hcard:hover{border-color:var(--red);transform:translateY(-2px)}
+    .hcard img{width:60px;height:60px;object-fit:cover;display:block}
+    .hcard-name{font-size:9px;padding:3px 4px;text-align:center;background:var(--surface);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    /* ── BADGE SYSTEM ── */
+    .badge-bar{display:flex;gap:6px;flex-wrap:wrap;padding:6px 0 2px}
+    .badge-item{display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:11px;transition:.2s}
+    .badge-item.earned{background:rgba(255,193,7,.12);border-color:rgba(255,193,7,.4);color:#ffc107}
+    .badge-item.earned .badge-icon{filter:none}
+    .badge-icon{font-size:14px;filter:grayscale(1) opacity(.4)}
+    /* ── DASHBOARD ── */
+    .dash-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+    .dash-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+    .dash-num{font-size:22px;font-weight:700;color:var(--text)}
+    .dash-label{font-size:11px;color:var(--muted);margin-top:2px}
+    .bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+    .bar-label{font-size:12px;min-width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bar-track{flex:1;background:var(--surface);border-radius:4px;height:8px;overflow:hidden}
+    .bar-fill{height:100%;border-radius:4px;background:var(--red);transition:width .6s ease}
+    .bar-count{font-size:11px;color:var(--muted);min-width:24px;text-align:right}
     @media(max-width:600px){.hero{height:190px}.grid{gap:8px}.gsz-btn{width:24px;height:24px;font-size:9px;padding:0}.grid-sizer span{display:none}}
   </style>
 </head>
@@ -183,16 +222,28 @@
     <button class="fbtn" onclick="setF('other',this)">✨ อื่นๆ</button>
     <div class="search-inline">
       <span class="search-icon">🔍</span>
-      <input id="q" type="text" placeholder="ค้นหาเกมส์..." oninput="currentPage=1;render()" autocomplete="off" />
+      <input id="q" type="text" placeholder="" oninput="currentPage=1;render()" autocomplete="off" />
       <button class="search-clear" id="search-clear" onclick="clearSearch()" style="display:none">✕</button>
     </div>
   </div>
 </div>
 
+<!-- ── HISTORY BAR ── -->
+<div class="history-bar" id="history-bar">
+  <div class="history-inner">
+    <div class="history-label">🕐 เล่นล่าสุด</div>
+    <div class="history-cards" id="history-cards"></div>
+  </div>
+</div>
+
 <main class="main">
+  <!-- Badge bar -->
+  <div class="badge-bar" id="badge-bar"></div>
+
   <div class="sec-hdr">
     <span class="sec-title" id="sec-title">เกมส์ทั้งหมด</span>
     <span class="sec-count" id="cnt">0 เกมส์</span>
+    <button class="random-btn" onclick="playRandom()" title="สุ่มเกม">🎲 สุ่มเกม</button>
     <div style="flex:1"></div>
     <div class="grid-sizer">
       <span style="font-size:11px;color:var(--muted)">ขนาด:</span>
@@ -241,6 +292,7 @@
     <h2>⚙️ จัดการเกมส์</h2>
 
     <button class="btn btn-green" style="margin-bottom:14px" onclick="openEditModal(null)">+ เพิ่มเกมใหม่</button>
+    <button class="btn btn-outline" style="margin-bottom:14px;width:100%" onclick="openDashboard()">📊 Dashboard สถิติ</button>
 
     <!-- จัดลำดับด้วยตัวเลข + ลากวาง -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
@@ -254,6 +306,7 @@
 
     <!-- GITHUB TOKEN MANAGEMENT -->
     <div class="sec-heading">🔑 GitHub Token</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px;background:rgba(255,193,7,.08);border:1px solid rgba(255,193,7,.2);border-radius:6px;padding:6px 10px">⚠️ เพิ่ม Firebase Rules:<br><code style="font-size:10px">"leaderboard":{".read":true,".write":true}<br>"stats":{".read":true,".write":true}</code></div>
     <div class="token-status-bar">
       <div class="token-info">
         <span class="token-dot" id="token-dot"></span>
@@ -378,6 +431,21 @@
         <div id="edit-rename-warn" style="display:none;font-size:11px;color:#ffa500;margin-top:4px">⚠️ ชื่อไฟล์เปลี่ยน — ระบบจะสร้างไฟล์ใหม่และลบไฟล์เดิมใน GitHub อัตโนมัติ</div>
       </div>
     </div>
+    <!-- Featured + Schedule -->
+    <div style="display:flex;gap:10px">
+      <div class="form-group" style="flex:1;margin-bottom:0">
+        <label>⭐ ปักหมุด Featured</label>
+        <select class="form-input" id="edit-featured">
+          <option value="">ปกติ</option>
+          <option value="1">⭐ แนะนำ</option>
+        </select>
+      </div>
+      <div class="form-group" style="flex:1;margin-bottom:0">
+        <label>📅 เผยแพร่วันที่ (ไม่บังคับ)</label>
+        <input class="form-input" id="edit-schedule" type="date" />
+      </div>
+    </div>
+    <div style="height:14px"></div>
 
     <!-- แก้ไข HTML (เฉพาะไฟล์ใน repo) -->
     <div id="edit-html-section" style="display:none">
@@ -449,6 +517,41 @@
   </div>
 </div>
 
+<!-- ── DASHBOARD MODAL ── -->
+<div class="modal-bg" id="dashboard-modal">
+  <div class="modal wide">
+    <button class="modal-close" onclick="closeModal('dashboard-modal')">✕</button>
+    <h2>📊 Dashboard สถิติ</h2>
+    <div class="dash-grid">
+      <div class="dash-card"><div class="dash-num" id="d-total">0</div><div class="dash-label">เกมทั้งหมด</div></div>
+      <div class="dash-card"><div class="dash-num" id="d-plays">0</div><div class="dash-label">ครั้งที่เล่น (รวม)</div></div>
+      <div class="dash-card"><div class="dash-num" id="d-featured">0</div><div class="dash-label">เกม Featured</div></div>
+      <div class="dash-card"><div class="dash-num" id="d-scheduled">0</div><div class="dash-label">รอเผยแพร่</div></div>
+    </div>
+    <div class="sec-heading" style="margin-bottom:10px">🏆 เกมยอดนิยม (Top 10)</div>
+    <div id="d-top-games"></div>
+    <div class="sec-heading" style="margin-bottom:10px;margin-top:16px">📚 หมวดหมู่</div>
+    <div id="d-cats"></div>
+  </div>
+</div>
+
+<!-- ── LEADERBOARD MODAL ── -->
+<div class="modal-bg" id="lb-modal">
+  <div class="modal" style="max-width:420px">
+    <button class="modal-close" onclick="closeModal('lb-modal')">✕</button>
+    <h2>🏆 <span id="lb-title">Leaderboard</span></h2>
+    <div id="lb-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px"></div>
+    <hr class="sec-divider">
+    <div class="sec-heading">บันทึกคะแนนของฉัน</div>
+    <div style="display:flex;gap:8px">
+      <input class="form-input" id="lb-name" placeholder="ชื่อผู้เล่น..." style="flex:1" />
+      <input class="form-input" id="lb-score" type="number" placeholder="คะแนน" style="width:90px" />
+    </div>
+    <button class="btn btn-green" style="margin-top:10px" onclick="submitScore()">📤 บันทึกคะแนน</button>
+    <div id="lb-msg" style="font-size:12px;margin-top:8px;color:var(--muted)"></div>
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -477,6 +580,7 @@ function buildPlayUrl(path){
 }
 // Firebase path สำหรับเก็บ token — อ่านได้เฉพาะ authenticated user (ตั้ง Rules ให้ถูกต้อง)
 const TOKEN_PATH = 'admin_config/gh_token';
+// Firebase paths: leaderboard/{gameId} + stats/plays/{gameId} — ต้องเปิด .write=true สำหรับ leaderboard
 
 const DEFAULT_GAMES = [
   {name:"ตกปลามาตรา ตัวสะกด",cat:"thai",img:"https://lh3.googleusercontent.com/sitesv/APaQ0STRiMSg_Xc3amGhBRzSl-FMM-39vBWWPjP5CtgFQTbSpRPCkaY7PlrbOgvkmprYSQ8hllLBmZqaTATC8cr5Hh5vr3JgW3C-Pz0RKD0LbDOF80RxalryBga8dtwqowXvohL1aqGdVUtPxarh9ttBRAVk67MmQgfW56rWrhh8Jl4VNuvfjd05nRqFjaw=w1280",url:"https://gemini.google.com/share/c601ecba61e3"},
@@ -557,7 +661,16 @@ function render(){
   q=(document.getElementById('q')||{}).value?.trim().toLowerCase()||'';
   const clearBtn=document.getElementById('search-clear');
   if(clearBtn)clearBtn.style.display=q?'block':'none';
-  const data=GAMES.filter(g=>(g.visible!==false)&&(filter==='all'||g.cat===filter)&&(!q||g.name.includes(q)));
+  const now=new Date();
+  const data=GAMES
+    .filter(g=>(g.visible!==false)&&(filter==='all'||g.cat===filter)&&(!q||g.name.includes(q)))
+    .sort((a,b)=>{
+      // featured ขึ้นก่อน แต่ scheduled ลงท้าย
+      const af=a.featured?1:0, bf=b.featured?1:0;
+      const as=a.scheduleDate&&new Date(a.scheduleDate)>now?-1:0;
+      const bs=b.scheduleDate&&new Date(b.scheduleDate)>now?-1:0;
+      return (bs-as)||(bf-af);
+    });
   const total=data.length;
   const totalPages=Math.max(1,Math.ceil(total/PAGE_SIZE));
   if(currentPage>totalPages)currentPage=1;
@@ -570,18 +683,29 @@ function render(){
   empty.classList.remove('on');
   grid.style.display='grid';
 
-  grid.innerHTML=paged.map(g=>`
-    <div class="card" onclick="openGameById('${g.id}')">
-      <div class="thumb">
+  grid.innerHTML=paged.map(g=>{
+    const available=isGameAvailable(g);
+    const isFeatured=!!g.featured;
+    const schedLabel=!available&&g.scheduleDate?'📅 '+new Date(g.scheduleDate).toLocaleDateString('th-TH',{day:'numeric',month:'short'}):'';
+    return `
+    <div class="card${isFeatured?' featured':''}${!available?' scheduled':''}" onclick="${available?`openGameById('${g.id}')`:'void(0)'}">
+      <div class="thumb" style="position:relative">
+        ${isFeatured?'<div class=\"featured-badge\">⭐ แนะนำ</div>':''}
+        ${schedLabel?`<div class=\"scheduled-badge\">${schedLabel}</div>`:''}
         <img src="${g.img||''}" alt="${g.name}" loading="lazy"
           onerror="this.classList.add('errored');this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%23161b22%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2254%22 text-anchor=%22middle%22 font-size=%2228%22>🎮</text></svg>'" />
       </div>
       <div class="card-body">
         <div class="card-name">${g.name}</div>
-        <div class="card-tags"><span class="tag t-${g.cat}">${catLabel(g.cat)}</span></div>
+        <div class="card-tags">
+          <span class="tag t-${g.cat}">${catLabel(g.cat)}</span>
+          ${isFeatured?'<span class=\"tag\" style=\"background:rgba(255,193,7,.15);color:#ffc107;border:1px solid rgba(255,193,7,.3)\">⭐</span>':''}
+        </div>
         ${g.updatedAt?`<div class="updated-badge">🕐 ${g.updatedAt}</div>`:''}
+        <button onclick="event.stopPropagation();openLeaderboard('${g.id}','${g.name.replace(/'/g,"\'")}')" style="margin-top:4px;background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:2px 8px;font-size:10px;cursor:pointer;font-family:inherit;transition:.2s" onmouseenter="this.style.borderColor='#ffc107';this.style.color='#ffc107'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">🏆 คะแนน</button>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 
   renderPager(currentPage,totalPages);
 }
@@ -653,6 +777,8 @@ db.ref('games_config/apps').on('value',snap=>{
     db.ref('games_config/apps').set(GAMES);
   }
   render();
+  renderHistory();
+  renderBadges();
   if(document.getElementById('admin-modal').classList.contains('open'))buildAdminList();
 });
 
@@ -815,7 +941,10 @@ function buildAdminList(){
         <div class="admin-item-title">${g.name}</div>
         <div class="admin-item-sub">${catLabel(g.cat)} • ${g.visible!==false?'🟢':'🔴'} ${g.updatedAt?'• 🕐 '+g.updatedAt:''}</div>
       </div>
-      <div class="admin-item-actions"><button class="btn-icon" onclick="openEditModal('${g.id}')">✏️</button></div>`;
+      <div class="admin-item-actions">
+        <button class="btn-icon" title="แก้ไข" onclick="openEditModal('${g.id}')">✏️</button>
+        <button class="btn-icon" title="Clone" onclick="cloneGame('${g.id}')">📋</button>
+      </div>`;
     item.addEventListener('dragstart',()=>{dragSrc=item;item.classList.add('dragging')});
     item.addEventListener('dragend',()=>{item.classList.remove('dragging');list.querySelectorAll('.admin-item').forEach(x=>x.classList.remove('drag-over'))});
     item.addEventListener('dragover',e=>{e.preventDefault();item.classList.add('drag-over')});
@@ -1125,8 +1254,12 @@ async function deleteGame(){
 }
 
 /* ─── OPEN GAME ─── */
-function openGameById(id){const g=GAMES.find(x=>x.id===id);if(g)openGame(g)}
-function openGame(g){
+function openGameById(id){
+  const g=GAMES.find(x=>x.id===id);
+  if(!g||!isGameAvailable(g))return;
+  addToHistory(g);
+  recordPlay(id);
+  renderBadges();
   if(!g.url)return;
   if(g.url.startsWith('http'))window.open(g.url,'_blank');
   else window.open(buildPlayUrl(g.url),'_blank');
@@ -1333,6 +1466,242 @@ async function confirmAddAfterPush(){
   closeModal('add-after-push-modal');
   alert('✅ เพิ่มเกม "'+name+'" ในรายการเรียบร้อย!');
 }
+
+/* ══════════════════════════════════════════
+   🎮 STUDENT FEATURES
+══════════════════════════════════════════ */
+
+/* ─── PLAY HISTORY (localStorage) ─── */
+const HIST_KEY='kampai_history';
+const HIST_MAX=10;
+
+function addToHistory(g){
+  try{
+    let hist=JSON.parse(localStorage.getItem(HIST_KEY)||'[]');
+    hist=hist.filter(x=>x.id!==g.id); // ลบถ้ามีอยู่แล้ว
+    hist.unshift({id:g.id,name:g.name,img:g.img||'',url:g.url,cat:g.cat});
+    hist=hist.slice(0,HIST_MAX);
+    localStorage.setItem(HIST_KEY,JSON.stringify(hist));
+    renderHistory();
+  }catch(e){}
+}
+
+function renderHistory(){
+  try{
+    const hist=JSON.parse(localStorage.getItem(HIST_KEY)||'[]');
+    const bar=document.getElementById('history-bar');
+    const cards=document.getElementById('history-cards');
+    if(!hist.length){bar.classList.remove('on');return;}
+    bar.classList.add('on');
+    cards.innerHTML=hist.map(g=>`
+      <div class="hcard" onclick="openGameObj(${JSON.stringify(g).replace(/"/g,'&quot;')})" title="${g.name}">
+        <img src="${g.img||''}" alt="${g.name}" loading="lazy"
+          onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 60 60%22><rect fill=%22%23161b22%22 width=%2260%22 height=%2260%22/><text x=%2230%22 y=%2234%22 text-anchor=%22middle%22 font-size=%2220%22>🎮</text></svg>'" />
+        <div class="hcard-name">${g.name}</div>
+      </div>`).join('');
+  }catch(e){}
+}
+
+function openGameObj(g){
+  addToHistory(g);
+  recordPlay(g.id);
+  if(!g.url)return;
+  if(g.url.startsWith('http'))window.open(g.url,'_blank');
+  else window.open(buildPlayUrl(g.url),'_blank');
+}
+
+/* ─── RANDOM GAME ─── */
+function playRandom(){
+  const pool=GAMES.filter(g=>g.visible!==false&&isGameAvailable(g));
+  if(!pool.length){alert('ยังไม่มีเกม');return;}
+  const g=pool[Math.floor(Math.random()*pool.length)];
+  // flash card ก่อนเปิด
+  const el=[...document.querySelectorAll('.card')].find(c=>c.dataset&&c.onclick?.toString().includes(g.id));
+  if(el){el.style.transition='none';el.style.boxShadow='0 0 0 3px var(--red)';setTimeout(()=>{el.style.boxShadow='';el.style.transition='';},400);}
+  setTimeout(()=>openGameById(g.id),300);
+}
+
+/* ─── AVAILABLE CHECK (schedule) ─── */
+function isGameAvailable(g){
+  if(!g.scheduleDate)return true;
+  return new Date()>=new Date(g.scheduleDate);
+}
+
+/* ─── PLAY COUNTER (Firebase) ─── */
+function recordPlay(gameId){
+  try{db.ref('stats/plays/'+gameId).transaction(v=>(v||0)+1);}catch(e){}
+}
+
+/* ─── BADGE SYSTEM ─── */
+const BADGES=[
+  {id:'thai',   icon:'🇹🇭', label:'นักอ่านไทย',   cat:'thai',  need:3},
+  {id:'math',   icon:'🔢', label:'นักคณิต',       cat:'math',  need:3},
+  {id:'tech',   icon:'💻', label:'เทคโนโลยี',     cat:'tech',  need:1},
+  {id:'other',  icon:'✨', label:'นักสำรวจ',      cat:'other', need:1},
+  {id:'all',    icon:'🏆', label:'เจ้าแห่งเกม',   cat:'all',   need:4},
+];
+
+function renderBadges(){
+  try{
+    const hist=JSON.parse(localStorage.getItem(HIST_KEY)||'[]');
+    const played={thai:new Set(),math:new Set(),tech:new Set(),other:new Set()};
+    hist.forEach(g=>{if(played[g.cat])played[g.cat].add(g.id);});
+    const catsPlayed=Object.keys(played).filter(c=>played[c].size>0).length;
+    const bar=document.getElementById('badge-bar');
+    if(!bar)return;
+    bar.innerHTML=BADGES.map(b=>{
+      const count=b.cat==='all'?catsPlayed:played[b.cat]?.size||0;
+      const earned=count>=b.need;
+      return `<div class="badge-item${earned?' earned':''}" title="${b.label}${earned?'':'  (ยังไม่ได้รับ)'}">
+        <span class="badge-icon">${b.icon}</span>
+        <span style="font-size:11px">${b.label}</span>
+        ${earned?'':'<span style="font-size:10px;opacity:.5"> ${count}/${b.need}</span>'}
+      </div>`;
+    }).join('');
+  }catch(e){}
+}
+
+/* ─── LEADERBOARD ─── */
+let lbGameId='';
+
+function openLeaderboard(gameId,gameName){
+  lbGameId=gameId;
+  document.getElementById('lb-title').textContent=gameName||'Leaderboard';
+  document.getElementById('lb-msg').textContent='';
+  document.getElementById('lb-name').value=localStorage.getItem('kampai_playername')||'';
+  document.getElementById('lb-score').value='';
+  loadLeaderboard(gameId);
+  openModal('lb-modal');
+}
+
+async function loadLeaderboard(gameId){
+  const list=document.getElementById('lb-list');
+  list.innerHTML='<div style="color:var(--muted);font-size:13px">⏳ กำลังโหลด...</div>';
+  try{
+    const snap=await db.ref('leaderboard/'+gameId).orderByChild('score').limitToLast(10).get();
+    const rows=[];
+    snap.forEach(c=>rows.push(c.val()));
+    rows.sort((a,b)=>b.score-a.score);
+    if(!rows.length){list.innerHTML='<div style="color:var(--muted);font-size:13px;text-align:center;padding:16px">ยังไม่มีคะแนน — เป็นคนแรกเลย!</div>';return;}
+    const medals=['🥇','🥈','🥉'];
+    list.innerHTML=rows.slice(0,10).map((r,i)=>`
+      <div style="display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 12px">
+        <span style="font-size:16px;width:24px;text-align:center">${medals[i]||'#'+(i+1)}</span>
+        <span style="flex:1;font-size:13px;font-weight:600">${r.name}</span>
+        <span style="font-size:14px;font-weight:700;color:#ffc107">${r.score.toLocaleString()}</span>
+      </div>`).join('');
+  }catch(e){list.innerHTML='<div style="color:#ff7b72;font-size:13px">โหลดไม่ได้: '+e.message+'</div>';}
+}
+
+async function submitScore(){
+  const name=document.getElementById('lb-name').value.trim();
+  const score=parseInt(document.getElementById('lb-score').value);
+  const msg=document.getElementById('lb-msg');
+  if(!name){msg.textContent='❌ กรอกชื่อก่อน';return;}
+  if(!score||score<0){msg.textContent='❌ กรอกคะแนนที่ถูกต้อง';return;}
+  try{
+    localStorage.setItem('kampai_playername',name);
+    await db.ref('leaderboard/'+lbGameId).push({name,score,date:new Date().toLocaleDateString('th-TH')});
+    msg.style.color='#3fb950';msg.textContent='✅ บันทึกคะแนนสำเร็จ!';
+    loadLeaderboard(lbGameId);
+  }catch(e){msg.style.color='#ff7b72';msg.textContent='❌ '+e.message;}
+}
+
+/* ══════════════════════════════════════════
+   👨‍🏫 ADMIN FEATURES
+══════════════════════════════════════════ */
+
+/* ─── CLONE GAME ─── */
+async function cloneGame(id){
+  const g=GAMES.find(x=>x.id===id);
+  if(!g)return;
+  if(!confirm('Clone เกม "'+g.name+'" ?'))return;
+  const cloned={...g,id:'g_'+Date.now()+Math.random().toString(36).substr(2,5),name:'[Copy] '+g.name,featured:'',scheduleDate:'',updatedAt:''};
+  const newG=[...GAMES,cloned];
+  await db.ref('games_config/apps').set(newG);
+  alert('✅ Clone สำเร็จ! เกมใหม่อยู่ท้ายรายการ');
+}
+
+/* ─── DASHBOARD ─── */
+async function openDashboard(){
+  openModal('dashboard-modal');
+  const total=GAMES.length;
+  const featured=GAMES.filter(g=>g.featured).length;
+  const scheduled=GAMES.filter(g=>g.scheduleDate&&!isGameAvailable(g)).length;
+
+  // โหลด play stats
+  let totalPlays=0;
+  const playMap={};
+  try{
+    const snap=await db.ref('stats/plays').get();
+    snap.forEach(c=>{playMap[c.key]=c.val();totalPlays+=c.val();});
+  }catch(e){}
+
+  document.getElementById('d-total').textContent=total;
+  document.getElementById('d-plays').textContent=totalPlays.toLocaleString();
+  document.getElementById('d-featured').textContent=featured;
+  document.getElementById('d-scheduled').textContent=scheduled;
+
+  // Top 10 games
+  const topGames=[...GAMES]
+    .map(g=>({...g,plays:playMap[g.id]||0}))
+    .sort((a,b)=>b.plays-a.plays).slice(0,10);
+  const maxPlays=Math.max(1,...topGames.map(g=>g.plays));
+  document.getElementById('d-top-games').innerHTML=topGames.map(g=>`
+    <div class="bar-row">
+      <span class="bar-label" title="${g.name}">${g.name}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(g.plays/maxPlays*100)}%"></div></div>
+      <span class="bar-count">${g.plays}</span>
+    </div>`).join('');
+
+  // Category breakdown
+  const catCount={thai:0,math:0,tech:0,other:0};
+  GAMES.forEach(g=>{if(catCount[g.cat]!==undefined)catCount[g.cat]++;});
+  const catMax=Math.max(1,...Object.values(catCount));
+  const catLabels={thai:'🇹🇭 ภาษาไทย',math:'🔢 คณิตศาสตร์',tech:'💻 เทคโนโลยี',other:'✨ อื่นๆ'};
+  document.getElementById('d-cats').innerHTML=Object.entries(catCount).map(([c,n])=>`
+    <div class="bar-row">
+      <span class="bar-label">${catLabels[c]}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/catMax*100)}%;background:#2f86f7"></div></div>
+      <span class="bar-count">${n}</span>
+    </div>`).join('');
+}
+
+/* ─── FEATURED & SCHEDULE in openEditModal ─── */
+const _origOpenEdit=openEditModal;
+openEditModal=function(id){
+  _origOpenEdit(id);
+  const g=id?GAMES.find(x=>x.id===id):null;
+  const featEl=document.getElementById('edit-featured');
+  const schedEl=document.getElementById('edit-schedule');
+  if(featEl)featEl.value=g?.featured||'';
+  if(schedEl)schedEl.value=g?.scheduleDate||'';
+};
+
+const _origSaveGame=saveGameData;
+saveGameData=async function(){
+  // inject featured+schedule before saving
+  const origFn=_origSaveGame.toString();
+  const id=document.getElementById('edit-id').value;
+  const name=document.getElementById('edit-name').value.trim();
+  const url=document.getElementById('edit-url').value.trim();
+  if(!name||!url)return _origSaveGame();
+  const now=new Date().toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'});
+  const data={
+    id:id||'g_'+Date.now(),name,url,
+    cat:document.getElementById('edit-cat').value,
+    img:document.getElementById('edit-img-data').value,
+    visible:true,
+    updatedAt:now,
+    featured:document.getElementById('edit-featured')?.value||'',
+    scheduleDate:document.getElementById('edit-schedule')?.value||''
+  };
+  let newG=[...GAMES];
+  if(id)newG=newG.map(g=>g.id===id?{...g,...data}:g);else newG.push(data);
+  await db.ref('games_config/apps').set(newG);
+  alert('✅ บันทึกข้อมูลเกมสำเร็จ');
+  closeModal('edit-modal');
+};
 </script>
 </body>
 </html>
