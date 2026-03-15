@@ -42,7 +42,8 @@
     .sec-hdr{display:flex;align-items:center;gap:10px;margin-bottom:18px}
     .sec-title{font-size:17px;font-weight:600}
     .sec-count{background:var(--surface);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:2px 10px;border-radius:20px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
+    /* ── GRID SIZE ── */
+    .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(var(--card-min,155px),1fr))}
     .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;color:var(--text);display:flex;flex-direction:column;transition:transform .22s,box-shadow .22s,border-color .22s;animation:fadeUp .4s ease both;cursor:pointer}
     @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
     .card:nth-child(1){animation-delay:.05s}.card:nth-child(2){animation-delay:.10s}.card:nth-child(3){animation-delay:.15s}.card:nth-child(4){animation-delay:.20s}.card:nth-child(5){animation-delay:.25s}.card:nth-child(6){animation-delay:.30s}
@@ -50,10 +51,15 @@
     .thumb{aspect-ratio:1/1;width:100%;display:block;background:#111;overflow:hidden;position:relative}
     .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform .3s ease}
     .card:hover .thumb img{transform:scale(1.06)}
-    .card-body{padding:10px 12px 12px;background:var(--surface);border-top:1px solid var(--border);display:flex;flex-direction:column;gap:4px}
-    .card-name{font-size:13px;font-weight:600;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .card-body{padding:var(--card-pad,10px 12px 12px);background:var(--surface);border-top:1px solid var(--border);display:flex;flex-direction:column;gap:4px}
+    .card-name{font-size:var(--card-font,13px);font-weight:600;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
     .card-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:2px}
-    .tag{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500}
+    .tag{font-size:var(--tag-font,10px);padding:2px 7px;border-radius:20px;font-weight:500}
+    /* grid size buttons */
+    .grid-sizer{display:flex;align-items:center;gap:6px}
+    .gsz-btn{background:var(--bg2);border:1px solid var(--border);color:var(--muted);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700;font-family:inherit;transition:.2s;display:flex;align-items:center;justify-content:center}
+    .gsz-btn:hover{border-color:var(--red);color:var(--text)}
+    .gsz-btn.active{background:var(--red);border-color:var(--red);color:#fff}
     .t-thai{background:rgba(229,57,53,.15);color:#ef9a9a;border:1px solid rgba(229,57,53,.3)}
     .t-math{background:rgba(47,134,247,.15);color:#90caf9;border:1px solid rgba(47,134,247,.3)}
     .t-tech{background:rgba(0,188,212,.15);color:#80deea;border:1px solid rgba(0,188,212,.3)}
@@ -89,11 +95,13 @@
     .btn-sm{padding:6px 12px;font-size:12px;width:auto}
     .err-msg{color:#ff7b72;font-size:13px;margin-bottom:12px}
     .admin-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-    .admin-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;display:flex;align-items:center;gap:12px;cursor:grab}
+    .admin-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:8px 10px;display:flex;align-items:center;gap:8px;cursor:grab}
+    .order-input{width:36px;height:28px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:13px;font-weight:700;text-align:center;outline:none;flex-shrink:0}
+    .order-input:focus{border-color:var(--red)}
     .admin-item:active{cursor:grabbing}
     .admin-item.dragging{opacity:.4;border-style:dashed}
     .admin-item.drag-over{border-color:var(--red)}
-    .admin-item-drag{color:var(--muted);font-size:18px}
+    .admin-item-drag{color:var(--muted);font-size:16px;cursor:grab;flex-shrink:0}
     .admin-item-thumb{width:48px;height:32px;background:var(--surface);border-radius:4px;overflow:hidden;display:flex;align-items:center;justify-content:center}
     .admin-item-thumb img{width:100%;height:100%;object-fit:cover}
     .admin-item-info{flex:1;overflow:hidden}
@@ -123,7 +131,7 @@
     .token-dot.missing{background:#ff7b72;box-shadow:0 0 6px #ff7b72}
     .token-info{display:flex;align-items:center;flex:1}
     .token-note{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.6}
-    @media(max-width:600px){.hero{height:190px}.grid{grid-template-columns:repeat(3,1fr);gap:8px}}
+    @media(max-width:600px){.hero{height:190px}.grid{gap:8px}.gsz-btn{width:26px;height:26px;font-size:10px}}
   </style>
 </head>
 <body>
@@ -167,6 +175,15 @@
   <div class="sec-hdr">
     <span class="sec-title" id="sec-title">เกมส์ทั้งหมด</span>
     <span class="sec-count" id="cnt">0 เกมส์</span>
+    <div style="flex:1"></div>
+    <div class="grid-sizer">
+      <span style="font-size:11px;color:var(--muted)">ขนาด:</span>
+      <button class="gsz-btn" onclick="setGridSize('xs')" id="gsz-xs" title="เล็กมาก">XS</button>
+      <button class="gsz-btn" onclick="setGridSize('s')" id="gsz-s" title="เล็ก">S</button>
+      <button class="gsz-btn active" onclick="setGridSize('m')" id="gsz-m" title="กลาง">M</button>
+      <button class="gsz-btn" onclick="setGridSize('l')" id="gsz-l" title="ใหญ่">L</button>
+      <button class="gsz-btn" onclick="setGridSize('xl')" id="gsz-xl" title="ใหญ่มาก">XL</button>
+    </div>
   </div>
   <div class="grid" id="grid"></div>
   <div class="empty" id="empty">🔍 ไม่พบเกมส์ที่ค้นหา</div>
@@ -204,6 +221,12 @@
     <h2>⚙️ จัดการเกมส์</h2>
 
     <button class="btn btn-green" style="margin-bottom:14px" onclick="openEditModal(null)">+ เพิ่มเกมใหม่</button>
+
+    <!-- จัดลำดับด้วยตัวเลข + ลากวาง -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <span style="font-size:12px;color:var(--muted)">ใส่เลขลำดับ หรือลากวางเพื่อเรียง</span>
+      <button class="btn btn-outline btn-sm" onclick="sortByNumber()">🔢 เรียงตามเลข</button>
+    </div>
     <div class="admin-list" id="drag-list"></div>
     <button class="btn btn-outline" style="width:100%;margin-bottom:4px" onclick="saveGamesOrder()">💾 บันทึกลำดับ</button>
 
@@ -672,10 +695,11 @@ async function deleteToken(){
 function buildAdminList(){
   const list=document.getElementById('drag-list');
   list.innerHTML='';
-  GAMES.forEach(g=>{
+  GAMES.forEach((g,i)=>{
     const item=document.createElement('div');
     item.className='admin-item';item.draggable=true;item.dataset.id=g.id;
     item.innerHTML=`
+      <input class="order-input" type="number" min="1" max="${GAMES.length}" value="${i+1}" title="ลำดับ" data-id="${g.id}" />
       <span class="admin-item-drag">⠿</span>
       <div class="admin-item-thumb"><img src="${g.img||'https://via.placeholder.com/300x170'}" loading="lazy"/></div>
       <div class="admin-item-info">
@@ -694,15 +718,70 @@ function buildAdminList(){
         a.indexOf(dragSrc)<a.indexOf(item)?item.after(dragSrc):item.before(dragSrc);
       }
       item.classList.remove('drag-over');
+      // อัปเดตเลขลำดับในช่องหลังลากวาง
+      refreshOrderNumbers();
     });
     list.appendChild(item);
   });
 }
+
+function refreshOrderNumbers(){
+  const items=[...document.getElementById('drag-list').children];
+  items.forEach((el,i)=>{
+    const inp=el.querySelector('.order-input');
+    if(inp)inp.value=i+1;
+  });
+}
+
+function sortByNumber(){
+  const list=document.getElementById('drag-list');
+  const items=[...list.children];
+  // อ่านเลขจากแต่ละช่อง
+  const sorted=items.map(el=>({el,n:parseInt(el.querySelector('.order-input')?.value||999)}))
+    .sort((a,b)=>a.n-b.n);
+  sorted.forEach(({el})=>list.appendChild(el));
+  refreshOrderNumbers();
+}
 async function saveGamesOrder(){
   const items=[...document.getElementById('drag-list').children];
   await db.ref('games_config/apps').set(items.map(el=>GAMES.find(g=>g.id===el.dataset.id)).filter(Boolean));
-  alert('บันทึกลำดับเกมสำเร็จ');
+  alert('✅ บันทึกลำดับสำเร็จ');
 }
+
+/* ─── GRID SIZE ─── */
+const GRID_SIZES={
+  xs:{min:'110px',pad:'6px 8px 8px', font:'11px',tag:'9px'},
+  s: {min:'140px',pad:'8px 10px 10px',font:'12px',tag:'9px'},
+  m: {min:'155px',pad:'10px 12px 12px',font:'13px',tag:'10px'},
+  l: {min:'200px',pad:'12px 14px 14px',font:'14px',tag:'11px'},
+  xl:{min:'260px',pad:'14px 16px 16px',font:'15px',tag:'12px'},
+};
+let currentSize='m';
+
+function setGridSize(sz){
+  const cfg=GRID_SIZES[sz];
+  if(!cfg)return;
+  currentSize=sz;
+  const root=document.documentElement;
+  root.style.setProperty('--card-min',cfg.min);
+  root.style.setProperty('--card-pad',cfg.pad);
+  root.style.setProperty('--card-font',cfg.font);
+  root.style.setProperty('--tag-font',cfg.tag);
+  // อัปเดตปุ่ม active
+  ['xs','s','m','l','xl'].forEach(k=>{
+    const btn=document.getElementById('gsz-'+k);
+    if(btn)btn.classList.toggle('active',k===sz);
+  });
+  // บันทึกลงใน localStorage
+  try{localStorage.setItem('gameGridSize',sz);}catch(e){}
+}
+
+// โหลดขนาดที่บันทึกไว้
+(function initGridSize(){
+  let saved='m';
+  try{saved=localStorage.getItem('gameGridSize')||'m';}catch(e){}
+  setGridSize(saved);
+})();
 
 /* ─── EDIT GAME ─── */
 function handleImgUpload(e){
