@@ -19,12 +19,7 @@
     .brand{font-size:15px;font-weight:600}
     .search-btn{background:none;border:1px solid var(--border);color:var(--muted);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:.2s}
     .search-btn:hover{border-color:var(--red);color:var(--text)}
-    #search-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;align-items:flex-start;justify-content:center;padding-top:80px}
-    #search-ov.on{display:flex}
-    .search-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;width:90%;max-width:520px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
-    .search-close{float:right;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;margin-bottom:10px}
-    .search-box input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text);font-family:inherit;font-size:16px;outline:none}
-    .search-box input:focus{border-color:var(--red)}
+    /* search-ov removed — using inline search */
     .hero{position:relative;height:240px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;overflow:hidden}
     .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(229,57,53,.35) 0%,transparent 60%),radial-gradient(ellipse at 80% 30%,rgba(47,134,247,.3) 0%,transparent 60%),linear-gradient(180deg,#0a0f1a 0%,#0d1117 100%)}
     .particles{position:absolute;inset:0;pointer-events:none}
@@ -34,10 +29,26 @@
     .hero-title{font-size:clamp(1.8rem,5vw,3rem);font-weight:700;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.5)}
     .hero-line{width:100px;height:4px;background:var(--red);border-radius:2px;margin:10px auto 12px}
     .hero-sub{font-size:14px;color:rgba(255,255,255,.6)}
-    .filters{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 20px}
-    .filters-inner{max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px}
+    .filters{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 20px}
+    .filters-inner{max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
     .fbtn{background:transparent;border:2px solid var(--red);color:var(--text);padding:5px 16px;border-radius:8px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:.2s;white-space:nowrap}
     .fbtn:hover,.fbtn.active{background:var(--red);color:#fff;transform:translateY(-1px);box-shadow:0 4px 14px rgba(229,57,53,.4)}
+    /* inline search */
+    .search-inline{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0 10px;height:34px;flex:1;min-width:160px;max-width:320px;transition:border-color .2s;margin-left:auto}
+    .search-inline:focus-within{border-color:var(--red)}
+    .search-icon{font-size:14px;flex-shrink:0;opacity:.6}
+    .search-inline input{background:none;border:none;color:var(--text);font-family:inherit;font-size:13px;outline:none;flex:1;min-width:0}
+    .search-inline input::placeholder{color:var(--muted)}
+    .search-clear{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0;line-height:1;flex-shrink:0}
+    .search-clear:hover{color:var(--text)}
+    /* skeleton */
+    .skeleton-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(var(--card-min,155px),1fr))}
+    .skel-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+    .skel-thumb{aspect-ratio:1/1;background:linear-gradient(90deg,var(--surface) 25%,var(--bg2) 50%,var(--surface) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+    .skel-body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:6px}
+    .skel-line{height:10px;border-radius:4px;background:linear-gradient(90deg,var(--surface) 25%,var(--bg2) 50%,var(--surface) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+    .skel-line.short{width:55%}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
     .main{max-width:1100px;margin:0 auto;padding:24px 20px 60px}
     .sec-hdr{display:flex;align-items:center;gap:10px;margin-bottom:18px}
     .sec-title{font-size:17px;font-weight:600}
@@ -148,15 +159,10 @@
     <a class="back" href="../index.html">← หน้าหลัก</a>
     <div class="brand">🏫 โรงเรียนบ้านคำไผ่</div>
   </div>
-  <button class="search-btn" onclick="toggleSearch()">🔍</button>
+  
 </nav>
 
-<div id="search-ov">
-  <div class="search-box">
-    <button class="search-close" onclick="toggleSearch()">✕</button>
-    <input id="q" type="text" placeholder="ค้นหาเกมส์..." oninput="currentPage=1;render()" />
-  </div>
-</div>
+
 
 <section class="hero">
   <div class="hero-bg"></div>
@@ -175,6 +181,11 @@
     <button class="fbtn" onclick="setF('math',this)">🔢 คณิตศาสตร์</button>
     <button class="fbtn" onclick="setF('tech',this)">💻 เทคโนโลยี</button>
     <button class="fbtn" onclick="setF('other',this)">✨ อื่นๆ</button>
+    <div class="search-inline">
+      <span class="search-icon">🔍</span>
+      <input id="q" type="text" placeholder="ค้นหาเกมส์..." oninput="currentPage=1;render()" autocomplete="off" />
+      <button class="search-clear" id="search-clear" onclick="clearSearch()" style="display:none">✕</button>
+    </div>
   </div>
 </div>
 
@@ -192,7 +203,9 @@
       <button class="gsz-btn" onclick="setGridSize('xl')" id="gsz-xl" title="ใหญ่มาก">XL</button>
     </div>
   </div>
-  <div class="grid" id="grid"></div>
+  <!-- skeleton แสดงระหว่างโหลด -->
+  <div class="skeleton-grid" id="skeleton"></div>
+  <div class="grid" id="grid" style="display:none"></div>
   <div class="empty" id="empty">🔍 ไม่พบเกมส์ที่ค้นหา</div>
 </main>
 
@@ -507,13 +520,43 @@ const auth=firebase.auth();
 const db=firebase.database();
 
 let GAMES=[],filter='all',q='',isAdmin=false,dragSrc=null;
-let GH_TOKEN=''; // โหลดจาก Firebase หลัง login
+let GH_TOKEN='';
+
 
 const PAGE_SIZE=24;
 let currentPage=1;
 
+/* ─── SKELETON ─── */
+function showSkeleton(n=12){
+  const sk=document.getElementById('skeleton');
+  const grid=document.getElementById('grid');
+  sk.innerHTML=Array(n).fill(`
+    <div class="skel-card">
+      <div class="skel-thumb"></div>
+      <div class="skel-body">
+        <div class="skel-line"></div>
+        <div class="skel-line short"></div>
+      </div>
+    </div>`).join('');
+  sk.style.display='grid';
+  grid.style.display='none';
+}
+function hideSkeleton(){
+  document.getElementById('skeleton').style.display='none';
+  document.getElementById('grid').style.display='grid';
+}
+// แสดง skeleton ทันทีก่อนข้อมูล Firebase มาถึง
+showSkeleton(12);
+function clearSearch(){
+  const inp=document.getElementById('q');
+  if(inp){inp.value='';inp.focus();}
+  currentPage=1;render();
+}
+
 function render(){
   q=(document.getElementById('q')||{}).value?.trim().toLowerCase()||'';
+  const clearBtn=document.getElementById('search-clear');
+  if(clearBtn)clearBtn.style.display=q?'block':'none';
   const data=GAMES.filter(g=>(g.visible!==false)&&(filter==='all'||g.cat===filter)&&(!q||g.name.includes(q)));
   const total=data.length;
   const totalPages=Math.max(1,Math.ceil(total/PAGE_SIZE));
@@ -521,9 +564,11 @@ function render(){
   const paged=data.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
 
   document.getElementById('cnt').textContent=`${total} เกมส์`;
+  hideSkeleton();
   const grid=document.getElementById('grid'),empty=document.getElementById('empty');
-  if(!total){grid.innerHTML='';empty.classList.add('on');renderPager(0,0);return}
+  if(!total){grid.innerHTML='';grid.style.display='none';empty.classList.add('on');renderPager(0,0);return}
   empty.classList.remove('on');
+  grid.style.display='grid';
 
   grid.innerHTML=paged.map(g=>`
     <div class="card" onclick="openGameById('${g.id}')">
@@ -573,13 +618,13 @@ function setF(f,btn){
   document.getElementById('sec-title').textContent={all:'เกมส์ทั้งหมด',thai:'ภาษาไทย',math:'คณิตศาสตร์',tech:'เทคโนโลยี',other:'อื่นๆ'}[f]||'เกมส์';
   render();
 }
-function toggleSearch(){
-  const ov=document.getElementById('search-ov');
-  ov.classList.toggle('on');
-  if(ov.classList.contains('on'))setTimeout(()=>document.getElementById('q').focus(),100);
-}
-document.getElementById('search-ov').addEventListener('click',e=>{if(e.target.id==='search-ov')toggleSearch()});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('search-ov').classList.contains('on'))toggleSearch()});
+// กด / เพื่อโฟกัส search, Escape เพื่อออก
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){
+    e.preventDefault();const inp=document.getElementById('q');if(inp){inp.focus();inp.select();}
+  }
+  if(e.key==='Escape'&&document.activeElement===document.getElementById('q')){document.getElementById('q').blur();}
+});
 
 /* particles */
 (function(){
