@@ -276,9 +276,11 @@
 
 <!-- ── EDIT GAME MODAL ── -->
 <div class="modal-bg" id="edit-modal">
-  <div class="modal">
+  <div class="modal wide">
     <button class="modal-close" onclick="closeModal('edit-modal')">✕</button>
     <h2 id="edit-title">✏️ เพิ่ม/แก้ไขเกม</h2>
+
+    <!-- รูปปก -->
     <div class="img-upload-area" onclick="document.getElementById('edit-img-input').click()">
       <div id="img-upload-hint">
         <div style="font-size:24px;margin-bottom:8px">🖼️</div>
@@ -290,6 +292,8 @@
     </div>
     <input type="hidden" id="edit-img-data" />
     <input type="hidden" id="edit-id" />
+
+    <!-- ข้อมูลเกม -->
     <div class="form-group">
       <label>ชื่อเกม</label>
       <input class="form-input" id="edit-name" placeholder="ชื่อเกม..." />
@@ -305,13 +309,61 @@
     </div>
     <div class="form-group">
       <label>ลิงก์ URL (path ไฟล์ หรือลิงก์นอก)</label>
-      <input class="form-input" id="edit-url" placeholder="games/thai/attack-noun.html หรือ https://..." />
+      <input class="form-input" id="edit-url" placeholder="games/thai/attack-noun.html หรือ https://..." oninput="onEditUrlChange()" />
     </div>
+
+    <!-- แก้ไข HTML (เฉพาะไฟล์ใน repo) -->
+    <div id="edit-html-section" style="display:none">
+      <hr class="sec-divider">
+      <div class="sec-heading">✏️ แก้ไข HTML ของเกม</div>
+      <button class="btn btn-outline" style="width:100%;margin-bottom:10px" id="fetch-html-btn" onclick="fetchGameHtml()">⬇️ ดึง HTML จาก GitHub มาแก้ไข</button>
+      <div id="fetch-html-status" style="font-size:12px;color:var(--muted);margin-bottom:8px;display:none"></div>
+      <textarea class="code-area" id="edit-html-code" placeholder="HTML Code จะปรากฏที่นี่หลังกด ดึง HTML..." style="min-height:200px"></textarea>
+      <button class="btn btn-blue" style="margin-top:8px" id="push-edit-btn" onclick="pushEditedHtml()">🚀 บันทึก HTML ขึ้น GitHub</button>
+      <div class="push-status" id="edit-push-status"></div>
+    </div>
+
     <div style="display:flex;gap:10px;margin-top:20px">
       <button class="btn btn-outline" style="flex:1" onclick="closeModal('edit-modal')">ยกเลิก</button>
-      <button class="btn btn-green" style="flex:2" onclick="saveGameData()">💾 บันทึก</button>
+      <button class="btn btn-green" style="flex:2" onclick="saveGameData()">💾 บันทึกข้อมูล</button>
     </div>
     <button class="btn btn-red" id="btn-delete" style="display:none" onclick="deleteGame()">🗑 ลบเกมนี้ทิ้ง</button>
+  </div>
+</div>
+
+<!-- ── ADD GAME AFTER PUSH MODAL ── -->
+<div class="modal-bg" id="add-after-push-modal">
+  <div class="modal" style="max-width:460px">
+    <button class="modal-close" onclick="closeModal('add-after-push-modal')">✕</button>
+    <h2>🎮 เพิ่มเกมในรายการ</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">อัปโหลดไฟล์สำเร็จแล้ว! ต้องการเพิ่มเกมนี้ให้แสดงในหน้าหลักด้วยไหม?</p>
+    <div class="img-upload-area" onclick="document.getElementById('aap-img-input').click()">
+      <div id="aap-img-hint">
+        <div style="font-size:24px;margin-bottom:6px">🖼️</div>
+        <div style="font-size:13px;font-weight:600">คลิกเพื่ออัพโหลดรูปปก (ไม่บังคับ)</div>
+      </div>
+      <img id="aap-img-preview" class="img-upload-preview" />
+      <input type="file" id="aap-img-input" accept="image/*" style="display:none" onchange="handleAapImg(event)" />
+    </div>
+    <input type="hidden" id="aap-img-data" />
+    <input type="hidden" id="aap-file-path" />
+    <div class="form-group">
+      <label>ชื่อเกม</label>
+      <input class="form-input" id="aap-name" placeholder="ชื่อเกม..." />
+    </div>
+    <div class="form-group">
+      <label>หมวดหมู่</label>
+      <select class="form-input" id="aap-cat">
+        <option value="thai">🇹🇭 ภาษาไทย</option>
+        <option value="math">🔢 คณิตศาสตร์</option>
+        <option value="tech">💻 เทคโนโลยี</option>
+        <option value="other">✨ อื่นๆ</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn btn-outline" style="flex:1" onclick="closeModal('add-after-push-modal')">ข้าม</button>
+      <button class="btn btn-green" style="flex:2" onclick="confirmAddAfterPush()">✅ เพิ่มในรายการหน้าหลัก</button>
+    </div>
   </div>
 </div>
 
@@ -624,6 +676,17 @@ function handleImgUpload(e){
   };
   r.readAsDataURL(file);
 }
+function onEditUrlChange(){
+  const url=document.getElementById('edit-url').value.trim();
+  // แสดงส่วนแก้ HTML เฉพาะไฟล์ใน repo (ไม่ใช่ external link)
+  const isLocal=url&&!url.startsWith('http');
+  document.getElementById('edit-html-section').style.display=isLocal?'block':'none';
+  // reset
+  document.getElementById('edit-html-code').value='';
+  document.getElementById('fetch-html-status').style.display='none';
+  document.getElementById('edit-push-status').style.display='none';
+}
+
 function openEditModal(id){
   const g=id?GAMES.find(x=>x.id===id):null;
   document.getElementById('edit-title').textContent=g?'✏️ แก้ไขเกม':'✨ เพิ่มเกมใหม่';
@@ -635,8 +698,86 @@ function openEditModal(id){
   document.getElementById('edit-img-data').value=g?(g.img||''):'';
   document.getElementById('edit-img-preview').src=g?(g.img||''):'';
   document.getElementById('edit-img-preview').style.display=g&&g.img?'block':'none';
+  document.getElementById('edit-html-code').value='';
+  document.getElementById('fetch-html-status').style.display='none';
+  document.getElementById('edit-push-status').style.display='none';
+  // แสดงส่วน HTML ถ้า url เป็น local path
+  const isLocal=g&&g.url&&!g.url.startsWith('http');
+  document.getElementById('edit-html-section').style.display=isLocal?'block':'none';
   openModal('edit-modal');
 }
+
+async function fetchGameHtml(){
+  const url=document.getElementById('edit-url').value.trim();
+  if(!url||url.startsWith('http')){alert('URL ต้องเป็น path ในไฟล์ repo เช่น games/thai/attack-noun.html');return;}
+  if(!GH_TOKEN){alert('กรุณาตั้งค่า GitHub Token ก่อน');return;}
+  const statusEl=document.getElementById('fetch-html-status');
+  const btn=document.getElementById('fetch-html-btn');
+  statusEl.style.display='block';
+  statusEl.textContent='⏳ กำลังดึง HTML จาก GitHub...';
+  btn.disabled=true;
+  try{
+    const apiUrl=`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${url}`;
+    const res=await fetch(apiUrl,{
+      headers:{Authorization:`Bearer ${GH_TOKEN}`,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+    });
+    if(res.ok){
+      const data=await res.json();
+      // decode base64 content
+      const decoded=decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
+      document.getElementById('edit-html-code').value=decoded;
+      statusEl.textContent=`✅ โหลดสำเร็จ (${decoded.length} chars) — แก้ไขแล้วกด "บันทึก HTML"`;
+      statusEl.style.color='#3fb950';
+    } else if(res.status===404){
+      statusEl.textContent='❌ ไม่พบไฟล์ใน repo — ตรวจสอบ path อีกครั้ง';
+      statusEl.style.color='#ff7b72';
+    } else {
+      statusEl.textContent=`❌ Error ${res.status}`;
+      statusEl.style.color='#ff7b72';
+    }
+  }catch(e){
+    statusEl.textContent=`❌ ${e.message}`;
+    statusEl.style.color='#ff7b72';
+  }
+  btn.disabled=false;
+}
+
+async function pushEditedHtml(){
+  const url=document.getElementById('edit-url').value.trim();
+  const code=document.getElementById('edit-html-code').value;
+  const statusEl=document.getElementById('edit-push-status');
+  const btn=document.getElementById('push-edit-btn');
+  if(!code.trim()){statusEl.className='push-status error';statusEl.textContent='❌ HTML ว่างอยู่';return;}
+  if(!GH_TOKEN){statusEl.className='push-status error';statusEl.textContent='❌ ไม่มี Token';return;}
+  btn.disabled=true;
+  statusEl.className='push-status loading';
+  statusEl.textContent='⏳ กำลังบันทึก HTML ขึ้น GitHub...';
+  const apiUrl=`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${url}`;
+  try{
+    let sha=null;
+    const checkRes=await fetch(apiUrl,{headers:{Authorization:`Bearer ${GH_TOKEN}`,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}});
+    if(checkRes.ok){const ex=await checkRes.json();sha=ex.sha;}
+    const encoded=btoa(unescape(encodeURIComponent(code)));
+    const res=await fetch(apiUrl,{
+      method:'PUT',
+      headers:{Authorization:`Bearer ${GH_TOKEN}`,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'},
+      body:JSON.stringify({message:`อัปเดตเกม: ${url}`,content:encoded,...(sha&&{sha})})
+    });
+    if(res.ok){
+      statusEl.className='push-status success';
+      statusEl.textContent='✅ บันทึก HTML สำเร็จ!';
+    } else {
+      const e=await res.json().catch(()=>({}));
+      statusEl.className='push-status error';
+      statusEl.textContent=`❌ Error ${res.status}: ${e.message||''}`;
+    }
+  }catch(e){
+    statusEl.className='push-status error';
+    statusEl.textContent=`❌ ${e.message}`;
+  }
+  btn.disabled=false;
+}
+
 async function saveGameData(){
   const id=document.getElementById('edit-id').value;
   const name=document.getElementById('edit-name').value.trim();
@@ -716,14 +857,23 @@ async function pushToGitHub(){
     });
 
     if(res.ok){
-      const pageUrl=`https://${REPO_OWNER}.github.io/${REPO_NAME}/${filePath}`;
+      const filePath2=filePath; // capture
       statusEl.className='push-status success';
-      statusEl.innerHTML=`✅ ${sha?'อัปเดต':'สร้าง'}ไฟล์สำเร็จ!<br>
-        <span style="font-size:12px;opacity:.8">📁 ${filePath}</span><br>
-        <a href="${pageUrl}" target="_blank" style="color:#3fb950;font-size:12px;word-break:break-all">🌐 ${pageUrl}</a>`;
+      const pageUrl=`https://${REPO_OWNER}.github.io/${REPO_NAME}/${filePath}`;
+      statusEl.innerHTML=`✅ อัปโหลดสำเร็จ! <a href="${pageUrl}" target="_blank" style="color:#3fb950;font-size:12px">🌐 เปิดไฟล์</a>`;
       document.getElementById('gh-filename').value='';
       document.getElementById('gh-code').value='';
       updatePathPreview();
+      // เปิด popup ให้เพิ่มเกมในรายการ
+      document.getElementById('aap-file-path').value=filePath2;
+      document.getElementById('aap-name').value=fname.replace('.html','').replace(/-/g,' ');
+      // ตั้ง folder → cat
+      const folderCat={'games/thai':'thai','games/math':'math','games/tech':'tech','games/other':'other'};
+      document.getElementById('aap-cat').value=folderCat[folder]||'other';
+      document.getElementById('aap-img-data').value='';
+      document.getElementById('aap-img-preview').src='';
+      document.getElementById('aap-img-preview').style.display='none';
+      setTimeout(()=>openModal('add-after-push-modal'),600);
     } else {
       const errData=await res.json().catch(()=>({}));
       statusEl.className='push-status error';
@@ -736,6 +886,37 @@ async function pushToGitHub(){
     statusEl.textContent=`❌ Network error: ${e.message}`;
   }
   pushBtn.disabled=false;
+}
+
+/* ─── ADD AFTER PUSH ─── */
+function handleAapImg(e){
+  const file=e.target.files[0];e.target.value='';
+  if(!file)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    document.getElementById('aap-img-data').value=ev.target.result;
+    document.getElementById('aap-img-preview').src=ev.target.result;
+    document.getElementById('aap-img-preview').style.display='block';
+    document.getElementById('aap-img-hint').style.display='none';
+  };
+  r.readAsDataURL(file);
+}
+async function confirmAddAfterPush(){
+  const name=document.getElementById('aap-name').value.trim();
+  if(!name){alert('กรุณากรอกชื่อเกม');return;}
+  const filePath=document.getElementById('aap-file-path').value;
+  const data={
+    id:'g_'+Date.now()+Math.random().toString(36).substr(2,5),
+    name,
+    url:filePath,
+    cat:document.getElementById('aap-cat').value,
+    img:document.getElementById('aap-img-data').value,
+    visible:true
+  };
+  const newG=[...GAMES,data];
+  await db.ref('games_config/apps').set(newG);
+  closeModal('add-after-push-modal');
+  alert('✅ เพิ่มเกม "'+name+'" ในรายการเรียบร้อย!');
 }
 </script>
 </body>
