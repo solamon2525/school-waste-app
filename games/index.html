@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 
@@ -189,17 +188,8 @@
     }
 
     @keyframes twinkle {
-
-      0%,
-      100% {
-        opacity: .2;
-        transform: scale(1)
-      }
-
-      50% {
-        opacity: 1;
-        transform: scale(2)
-      }
+      0%, 100% { opacity: .2; transform: scale(1) }
+      50% { opacity: 1; transform: scale(2) }
     }
 
     .hero-content {
@@ -313,48 +303,18 @@
     }
 
     @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(18px)
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0)
-      }
+      from { opacity: 0; transform: translateY(18px) }
+      to { opacity: 1; transform: translateY(0) }
     }
 
-    .card:nth-child(1) {
-      animation-delay: .05s
-    }
-
-    .card:nth-child(2) {
-      animation-delay: .10s
-    }
-
-    .card:nth-child(3) {
-      animation-delay: .15s
-    }
-
-    .card:nth-child(4) {
-      animation-delay: .20s
-    }
-
-    .card:nth-child(5) {
-      animation-delay: .25s
-    }
-
-    .card:nth-child(6) {
-      animation-delay: .30s
-    }
-
-    .card:nth-child(7) {
-      animation-delay: .35s
-    }
-
-    .card:nth-child(8) {
-      animation-delay: .40s
-    }
+    .card:nth-child(1) { animation-delay: .05s }
+    .card:nth-child(2) { animation-delay: .10s }
+    .card:nth-child(3) { animation-delay: .15s }
+    .card:nth-child(4) { animation-delay: .20s }
+    .card:nth-child(5) { animation-delay: .25s }
+    .card:nth-child(6) { animation-delay: .30s }
+    .card:nth-child(7) { animation-delay: .35s }
+    .card:nth-child(8) { animation-delay: .40s }
 
     .card:hover {
       transform: translateY(-6px);
@@ -414,23 +374,9 @@
       font-weight: 500
     }
 
-    .t-thai {
-      background: rgba(229, 57, 53, .15);
-      color: #ef9a9a;
-      border: 1px solid rgba(229, 57, 53, .3)
-    }
-
-    .t-math {
-      background: rgba(47, 134, 247, .15);
-      color: #90caf9;
-      border: 1px solid rgba(47, 134, 247, .3)
-    }
-
-    .t-tech {
-      background: rgba(0, 188, 212, .15);
-      color: #80deea;
-      border: 1px solid rgba(0, 188, 212, .3)
-    }
+    .t-thai { background: rgba(229, 57, 53, .15); color: #ef9a9a; border: 1px solid rgba(229, 57, 53, .3) }
+    .t-math { background: rgba(47, 134, 247, .15); color: #90caf9; border: 1px solid rgba(47, 134, 247, .3) }
+    .t-tech { background: rgba(0, 188, 212, .15); color: #80deea; border: 1px solid rgba(0, 188, 212, .3) }
 
     /* EMPTY */
     .empty {
@@ -440,9 +386,7 @@
       display: none
     }
 
-    .empty.on {
-      display: block
-    }
+    .empty.on { display: block }
 
     /* FOOTER */
     footer {
@@ -501,9 +445,7 @@
       backdrop-filter: blur(4px);
     }
 
-    .modal-bg.open {
-      display: flex;
-    }
+    .modal-bg.open { display: flex }
 
     .modal {
       background: var(--surface);
@@ -520,15 +462,8 @@
     }
 
     @keyframes modalIn {
-      from {
-        opacity: 0;
-        transform: scale(.95) translateY(20px)
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0)
-      }
+      from { opacity: 0; transform: scale(.95) translateY(20px) }
+      to { opacity: 1; transform: scale(1) translateY(0) }
     }
 
     .modal-close {
@@ -542,9 +477,7 @@
       cursor: pointer;
     }
 
-    .modal-close:hover {
-      color: var(--red);
-    }
+    .modal-close:hover { color: var(--red) }
 
     .modal h2 {
       font-size: 18px;
@@ -553,9 +486,7 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .form-group {
-      margin-bottom: 16px;
-    }
+    .form-group { margin-bottom: 16px }
 
     .form-group label {
       display: block;
@@ -577,9 +508,7 @@
       font-size: 14px;
     }
 
-    .form-input:focus {
-      border-color: var(--red);
-    }
+    .form-input:focus { border-color: var(--red) }
 
     .btn {
       padding: 10px 16px;
@@ -593,42 +522,14 @@
       text-align: center;
     }
 
-    .btn-green {
-      background: #238636;
-      color: #fff;
-      width: 100%;
-    }
+    .btn-green { background: #238636; color: #fff; width: 100% }
+    .btn-green:hover { background: #2ea043 }
+    .btn-red { background: #da3633; color: #fff; width: 100%; margin-top: 12px }
+    .btn-red:hover { background: #f85149 }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text) }
+    .btn-outline:hover { border-color: var(--muted) }
 
-    .btn-green:hover {
-      background: #2ea043;
-    }
-
-    .btn-red {
-      background: #da3633;
-      color: #fff;
-      width: 100%;
-      margin-top: 12px;
-    }
-
-    .btn-red:hover {
-      background: #f85149;
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-    }
-
-    .btn-outline:hover {
-      border-color: var(--muted);
-    }
-
-    .err-msg {
-      color: #ff7b72;
-      font-size: 13px;
-      margin-bottom: 12px;
-    }
+    .err-msg { color: #ff7b72; font-size: 13px; margin-bottom: 12px }
 
     /* ADMIN LIST */
     .admin-list {
@@ -649,24 +550,16 @@
       cursor: grab;
     }
 
-    .admin-item:active {
-      cursor: grabbing;
-    }
+    .admin-item:active { cursor: grabbing }
 
     .admin-item.dragging {
       opacity: 0.4;
       border-style: dashed;
     }
 
-    .admin-item.drag-over {
-      border-color: var(--red);
-    }
+    .admin-item.drag-over { border-color: var(--red) }
 
-    .admin-item-drag {
-      color: var(--muted);
-      font-size: 18px;
-      cursor: grab;
-    }
+    .admin-item-drag { color: var(--muted); font-size: 18px; cursor: grab }
 
     .admin-item-thumb {
       width: 48px;
@@ -679,16 +572,9 @@
       overflow: hidden;
     }
 
-    .admin-item-thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    .admin-item-thumb img { width: 100%; height: 100%; object-fit: cover }
 
-    .admin-item-info {
-      flex: 1;
-      overflow: hidden;
-    }
+    .admin-item-info { flex: 1; overflow: hidden }
 
     .admin-item-title {
       font-size: 14px;
@@ -698,15 +584,9 @@
       text-overflow: ellipsis;
     }
 
-    .admin-item-sub {
-      font-size: 11px;
-      color: var(--muted);
-    }
+    .admin-item-sub { font-size: 11px; color: var(--muted) }
 
-    .admin-item-actions {
-      display: flex;
-      gap: 6px;
-    }
+    .admin-item-actions { display: flex; gap: 6px }
 
     .btn-icon {
       background: var(--surface);
@@ -722,9 +602,7 @@
       font-size: 12px;
     }
 
-    .btn-icon:hover {
-      border-color: var(--red);
-    }
+    .btn-icon:hover { border-color: var(--red) }
 
     .img-upload-area {
       background: var(--bg2);
@@ -753,20 +631,171 @@
       margin: 0 auto;
     }
 
-    @media(max-width:600px) {
-      .hero {
-        height: 190px
-      }
-
-      .grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px
-      }
+    /* ── HTML FILE EDITOR ── */
+    .html-editor-section {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
     }
 
-    .card {
+    .html-editor-section h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+    }
+
+    .html-editor-section h3 span.badge {
+      font-size: 11px;
+      background: rgba(47, 134, 247, .15);
+      color: #90caf9;
+      border: 1px solid rgba(47, 134, 247, .3);
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .filename-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    .filename-row .folder-prefix {
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
+      padding: 10px 0;
+    }
+
+    .filename-row input {
+      flex: 1;
+    }
+
+    textarea.html-code-area {
+      width: 100%;
+      min-height: 180px;
+      background: #0d1117;
+      border: 1px solid var(--border);
+      color: #79c0ff;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      outline: none;
+      resize: vertical;
+      transition: border-color .2s;
+    }
+
+    textarea.html-code-area:focus { border-color: #2f86f7 }
+
+    .html-action-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .btn-blue {
+      background: #1f6feb;
+      color: #fff;
+      flex: 1;
+    }
+
+    .btn-blue:hover { background: #388bfd }
+
+    /* CODE PREVIEW MODAL */
+    .modal.modal-wide { max-width: 680px }
+
+    .code-preview-wrap {
+      position: relative;
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .code-preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      background: #161b22;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .code-preview-header .filename-label {
+      font-family: 'Courier New', monospace;
+      color: #79c0ff;
+      font-weight: 600;
+    }
+
+    .code-preview-body {
+      max-height: 400px;
+      overflow-y: auto;
+      padding: 14px;
+    }
+
+    .code-preview-body pre {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #e6edf3;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0;
+    }
+
+    .btn-copy {
+      background: #238636;
+      color: #fff;
+      border: none;
+      padding: 5px 14px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
       cursor: pointer;
+      transition: .2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
+
+    .btn-copy:hover { background: #2ea043 }
+    .btn-copy.copied { background: #1f6feb }
+
+    .copy-full-btn {
+      width: 100%;
+      padding: 11px;
+      font-size: 14px;
+    }
+
+    .step-guide {
+      background: rgba(47, 134, 247, .08);
+      border: 1px solid rgba(47, 134, 247, .2);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 13px;
+      line-height: 1.8;
+      color: #b3d1f5;
+    }
+
+    .step-guide strong { color: #79c0ff }
+
+    @media(max-width:600px) {
+      .hero { height: 190px }
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 12px }
+    }
+
+    .card { cursor: pointer }
   </style>
 </head>
 
@@ -852,7 +881,39 @@
       <h2>⚙️ จัดการเกมส์</h2>
       <button class="btn btn-green" style="margin-bottom:16px" onclick="openEditModal(null)">+ เพิ่มเกมใหม่</button>
       <div class="admin-list" id="drag-list"></div>
-      <button class="btn btn-outline" style="width:100%" onclick="saveGamesOrder()">💾 บันทึกลำดับเกมส์</button>
+      <button class="btn btn-outline" style="width:100%;margin-bottom:12px" onclick="saveGamesOrder()">💾 บันทึกลำดับเกมส์</button>
+
+      <!-- ── HTML FILE EDITOR SECTION ── -->
+      <div class="html-editor-section">
+        <h3>📄 บันทึกไฟล์เกม HTML <span class="badge">วาง code แล้ว copy</span></h3>
+
+        <div class="form-group">
+          <label>โฟลเดอร์ปลายทาง</label>
+          <select class="form-input" id="file-folder">
+            <option value="games/thai">games/thai/</option>
+            <option value="games/math">games/math/</option>
+            <option value="games/tech">games/tech/</option>
+            <option value="games/other">games/other/</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>ชื่อไฟล์ (เช่น attack-noun.html)</label>
+          <div class="filename-row">
+            <input class="form-input" id="file-name" placeholder="attack-noun.html" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>วาง HTML Code ที่นี่</label>
+          <textarea class="html-code-area" id="html-code-input" placeholder="&lt;!DOCTYPE html&gt;&#10;&lt;html lang=&quot;th&quot;&gt;&#10;...&#10;&lt;/html&gt;"></textarea>
+        </div>
+
+        <div class="html-action-row">
+          <button class="btn btn-outline" style="flex:1" onclick="clearHtmlEditor()">🗑 ล้าง</button>
+          <button class="btn btn-blue" onclick="showCodePreview()">👁 ดู &amp; Copy Code</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -869,8 +930,7 @@
           <div style="font-size:12px;color:var(--muted);margin-top:4px">JPG, PNG หรือ GIF สูงสุด 2MB</div>
         </div>
         <img id="edit-img-preview" class="img-upload-preview" />
-        <input type="file" id="edit-img-input" accept="image/*" style="display:none"
-          onchange="handleImgUpload(event)" />
+        <input type="file" id="edit-img-input" accept="image/*" style="display:none" onchange="handleImgUpload(event)" />
       </div>
       <input type="hidden" id="edit-img-data" />
       <input type="hidden" id="edit-id" />
@@ -897,6 +957,38 @@
         <button class="btn btn-green" style="flex:2" onclick="saveGameData()">💾 บันทึก</button>
       </div>
       <button class="btn btn-red" id="btn-delete" style="display:none" onclick="deleteGame()">🗑 ลบเกมนี้ทิ้ง</button>
+    </div>
+  </div>
+
+  <!-- CODE PREVIEW MODAL -->
+  <div class="modal-bg" id="code-preview-modal">
+    <div class="modal modal-wide">
+      <button class="modal-close" onclick="closeModal('code-preview-modal')">✕</button>
+      <h2>📋 Code พร้อม Copy</h2>
+
+      <div class="step-guide" style="margin-bottom:16px">
+        <strong>วิธีใช้:</strong><br>
+        1. กด <strong>Copy Code</strong> ด้านล่าง<br>
+        2. ไปที่ GitHub → <strong id="preview-path-guide">games/thai/</strong><br>
+        3. คลิก <strong>Add file → Create new file</strong><br>
+        4. พิมพ์ชื่อไฟล์ → วาง code → <strong>Commit changes</strong>
+      </div>
+
+      <div class="code-preview-wrap">
+        <div class="code-preview-header">
+          <span class="filename-label" id="preview-filename">attack-noun.html</span>
+          <button class="btn-copy" id="copy-top-btn" onclick="copyCode('copy-top-btn')">
+            <span>📋</span> Copy
+          </button>
+        </div>
+        <div class="code-preview-body">
+          <pre id="preview-code-content"></pre>
+        </div>
+      </div>
+
+      <button class="btn btn-green copy-full-btn" onclick="copyCode('copy-bottom-btn')" id="copy-bottom-btn">
+        📋 Copy Code ทั้งหมด
+      </button>
     </div>
   </div>
 
@@ -929,7 +1021,7 @@
       { name: "มหาศึกอักขระเวท", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SQVy_wppROvJcSJ-GrOmVgvPicx1vlYsOhzdXVarJcwCvzVKeCLNahzk4jZTno6_47WqnmgvS1wqIIYADaWV_kmB-nC2BXlLH6cM0KXneW2Eok4Nm1UqgqigebfNcTqrW7YcwrheDOx11d_fCpizpla8v0F7QHCt-ZB6hKGG0CN87U301pGddbEJ7I=w1280", url: "https://gemini.google.com/share/a0904f464522" },
       { name: "Shinobi: นินจากระต่ายล่าคำนาม", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SSGcRYZvChDQqO0tYxTxqTCy7eY9zScA0vya5sP2C1ZbgPnv6WV8CEbiufJmRqXGyxfrTh-_3LYXw_wA9AI2CGwbbarxaRjYJNkpYlGdf86Tn_Vb5vo8Pcua3z-ce6D45xxWHnh8Dib3bGZVWnF6PhQxx4JEnnSu1kTVPv5feg3duglujqGEHOLAgc=w1280", url: "https://gemini.google.com/share/f5756bfcd18e" },
       { name: "Super Math-Blaster", cat: "math", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SSmrO1elxpMt_SA82VQSp4eQAcSDBBpMPFPeqbnbyxNcb3C3dx2SEw89fKYSDoQjk9OspmiiO_LocvulY_FvMQQ7GRw8GLberqgQ4SytcrxluXTSbBrsFhoGZdTMFBRbQUuP35mPrMxU6gier5AtYsZ6Q5COPy6ozQAPRjlYLxKtV4aSYNTkIsw=w1280", url: "https://gemini.google.com/share/139049405d45" },
-      { name: "ศึกจอมเวทแห่งภาษา", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SQ-5n735-gMifk1AK2s6Zu1ssNvaAwogXB4UpUbHVwVN4yBLUEWMu4x-lRWMV9v8pBMb_st-jicUpThRt2xswCuJ5QFS3ITrsqpDS5jclBcDU2b8Hscq9weuq4uQYQCDJxX6r18VUY-fIpbA5qEG56qjKP3OWQOPJekmP0u5p03ZzlVo1TJ2T6jAfY=w1280", url: "https://gemini.google.com/share/9ea72960f2bb" },
+      { name: "ศึกจอมเวทแห่งภาษา", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SQ-5n735-gMifk1AK2s6Zu1ssNvaAwogXB4UpUbHVwVN4yBLUEWMv4x-lRWMV9v8pBMb_st-jicUpThRt2xswCuJ5QFS3ITrsqpDS5jclBcDU2b8Hscq9weuq4uQYQCDJxX6r18VUY-fIpbA5qEG56qjKP3OWQOPJekmP0u5p03ZzlVo1TJ2T6jAfY=w1280", url: "https://gemini.google.com/share/9ea72960f2bb" },
       { name: "Word Shield | โล่คำศัพท์พิทักษ์โลก", cat: "thai", img: "https://lh3.googleusercontent.com/sitesv/APaQ0STXeF7MT9r88KXzdv2SvU7XBM_l1IP9FNSxp-f1f61ndbAKX2ckh6zgBeSlhkLLCvoQhI_w8QAuGvb8vg6w-fU633WAU9bOnoBXseczypBabymLZzypSqG4UJsB1LpCL-7cP2nsCC5uangbDasWdI9pRlcBWXdjO4egj8PyOBk1qbI0rTqmpVjcSOc=w1280", url: "https://gemini.google.com/share/5d55653b47bd" },
       { name: "ปาร์ตี้อาหารจอมตะกละ", cat: "other", img: "https://lh3.googleusercontent.com/sitesv/APaQ0STRiMSg_Xc3amGhBRzSl-FMM-39vBWWPjP5CtgFQTbSpRPCkaY7PlrbOgvkmprYSQ8hllLBmZqaTATC8cr5Hh5vr3JgW3C-Pz0RKD0LbDOF80RxalryBga8dtwqowXvohL1aqGdVUtPxarh9ttBRAVk67MmQgfW56rWrhh8Jl4VNuvfjd05nRqFjaw=w1280", url: "https://gemini.google.com/share/ad6427303d82" },
       { name: "ขนมแสนอร่อยของเจ้าตัวเปี๊ยก", cat: "other", img: "https://lh3.googleusercontent.com/sitesv/APaQ0SQcsvqTrMBna0gr_RLkdP2_Sx75xOrYoO-BfJ9GflLD-eJLNvAh21EU57jixhEkNL7Q2hQO4eW-GRUzojadiSQqL172uBVfEh3BnnEQBu1IeJCtRbt-qHEYqK8cUAP2nRRNQTleKLlgIN5jSNoLtqLfpjVGjpI-Bj-azZ6iHReBcgOvH696B-UN=w1280", url: "https://gemini.google.com/share/c13f63124971" },
@@ -958,18 +1050,19 @@
       if (!data.length) { grid.innerHTML = ""; empty.classList.add("on"); return }
       empty.classList.remove("on");
       grid.innerHTML = data.map(g => `
-    <div class="card" onclick="openGameById('${g.id}')">
-      <div class="thumb"><img src="${g.img || 'https://via.placeholder.com/300x170'}" alt="${g.name}" loading="lazy"/></div>
-      <div class="card-body">
-        <div class="card-name">${g.name}</div>
-        <div class="card-tags">
-          <span class="tag t-${g.cat}">${catLabel(g.cat)}</span>
-        </div>
-      </div>
-    </div>`).join("");
+        <div class="card" onclick="openGameById('${g.id}')">
+          <div class="thumb"><img src="${g.img || 'https://via.placeholder.com/300x170'}" alt="${g.name}" loading="lazy"/></div>
+          <div class="card-body">
+            <div class="card-name">${g.name}</div>
+            <div class="card-tags">
+              <span class="tag t-${g.cat}">${catLabel(g.cat)}</span>
+            </div>
+          </div>
+        </div>`).join("");
     }
 
     function catLabel(c) { return { thai: "ภาษาไทย", math: "คณิตศาสตร์", tech: "เทคโนโลยี", other: "อื่นๆ" }[c] || c }
+
     function setF(f, btn) {
       filter = f;
       document.querySelectorAll(".fbtn").forEach(b => b.classList.remove("active"));
@@ -993,15 +1086,17 @@
       for (let i = 0; i < 35; i++) {
         const s = document.createElement("span");
         s.style.cssText = `left:${Math.random() * 100}%;top:${Math.random() * 100}%;
-      animation-delay:${Math.random() * 3}s;animation-duration:${2 + Math.random() * 3}s;
-      width:${1 + Math.random() * 2}px;height:${1 + Math.random() * 2}px`;
+          animation-delay:${Math.random() * 3}s;animation-duration:${2 + Math.random() * 3}s;
+          width:${1 + Math.random() * 2}px;height:${1 + Math.random() * 2}px`;
         c.appendChild(s);
       }
     })();
 
     function openModal(id) { document.getElementById(id).classList.add('open') }
     function closeModal(id) { document.getElementById(id).classList.remove('open') }
-    document.querySelectorAll('.modal-bg').forEach(bg => { bg.addEventListener('click', e => { if (e.target === bg) bg.classList.remove('open') }); });
+    document.querySelectorAll('.modal-bg').forEach(bg => {
+      bg.addEventListener('click', e => { if (e.target === bg) bg.classList.remove('open') });
+    });
 
     // FIREBASE & ADMIN
     db.ref('games_config/apps').on('value', snap => {
@@ -1026,6 +1121,7 @@
       document.getElementById('login-err').textContent = '';
       openModal('login-modal');
     }
+
     async function doLogin() {
       const email = document.getElementById('login-email').value.trim();
       const pwd = document.getElementById('login-pwd').value;
@@ -1042,14 +1138,8 @@
     }
     document.getElementById('login-pwd').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 
-    function doLogout() {
-      auth.signOut();
-      closeModal('admin-modal');
-    }
-    function openAdminPanel() {
-      buildAdminList();
-      openModal('admin-modal');
-    }
+    function doLogout() { auth.signOut(); closeModal('admin-modal') }
+    function openAdminPanel() { buildAdminList(); openModal('admin-modal') }
 
     function buildAdminList() {
       const list = document.getElementById('drag-list');
@@ -1058,16 +1148,16 @@
         const item = document.createElement('div');
         item.className = 'admin-item'; item.draggable = true; item.dataset.id = g.id;
         item.innerHTML = `
-      <span class="admin-item-drag">⠿</span>
-      <div class="admin-item-thumb"><img src="${g.img || 'https://via.placeholder.com/300x170'}" loading="lazy"/></div>
-      <div class="admin-item-info">
-        <div class="admin-item-title">${g.name}</div>
-        <div class="admin-item-sub">${catLabel(g.cat)} • ${g.visible !== false ? '🟢 แสดงผล' : '🔴 ลบซ่อนแล้ว'}</div>
-      </div>
-      <div class="admin-item-actions"><button class="btn-icon" onclick="openEditModal('${g.id}')">✏️</button></div>`;
-        item.addEventListener('dragstart', e => { dragSrc = item; item.classList.add('dragging'); });
-        item.addEventListener('dragend', () => { item.classList.remove('dragging'); list.querySelectorAll('.admin-item').forEach(x => x.classList.remove('drag-over')); });
-        item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
+          <span class="admin-item-drag">⠿</span>
+          <div class="admin-item-thumb"><img src="${g.img || 'https://via.placeholder.com/300x170'}" loading="lazy"/></div>
+          <div class="admin-item-info">
+            <div class="admin-item-title">${g.name}</div>
+            <div class="admin-item-sub">${catLabel(g.cat)} • ${g.visible !== false ? '🟢 แสดงผล' : '🔴 ลบซ่อนแล้ว'}</div>
+          </div>
+          <div class="admin-item-actions"><button class="btn-icon" onclick="openEditModal('${g.id}')">✏️</button></div>`;
+        item.addEventListener('dragstart', e => { dragSrc = item; item.classList.add('dragging') });
+        item.addEventListener('dragend', () => { item.classList.remove('dragging'); list.querySelectorAll('.admin-item').forEach(x => x.classList.remove('drag-over')) });
+        item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over') });
         item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
         item.addEventListener('drop', e => {
           e.preventDefault();
@@ -1095,7 +1185,14 @@
     }
 
     function openEditModal(id) {
-      const dom = { id: document.getElementById('edit-id'), name: document.getElementById('edit-name'), cat: document.getElementById('edit-cat'), url: document.getElementById('edit-url'), img: document.getElementById('edit-img-data'), prev: document.getElementById('edit-img-preview') };
+      const dom = {
+        id: document.getElementById('edit-id'),
+        name: document.getElementById('edit-name'),
+        cat: document.getElementById('edit-cat'),
+        url: document.getElementById('edit-url'),
+        img: document.getElementById('edit-img-data'),
+        prev: document.getElementById('edit-img-preview')
+      };
       const g = id ? GAMES.find(x => x.id === id) : null;
       document.getElementById('edit-title').textContent = g ? '✏️ แก้ไขเกม' : '✨ เพิ่มเกมใหม่';
       document.getElementById('btn-delete').style.display = g ? 'block' : 'none';
@@ -1116,7 +1213,13 @@
       if (!name) { alert('กรุณากรอกชื่อเกม'); return; }
       if (!url) { alert('กรุณากรอกลิงก์ URL'); return; }
       let newG = [...GAMES];
-      const data = { id: id || 'g_' + Date.now(), name, url, cat: document.getElementById('edit-cat').value, img: document.getElementById('edit-img-data').value, visible: true };
+      const data = {
+        id: id || 'g_' + Date.now(),
+        name, url,
+        cat: document.getElementById('edit-cat').value,
+        img: document.getElementById('edit-img-data').value,
+        visible: true
+      };
       if (id) newG = newG.map(g => g.id === id ? { ...g, ...data } : g);
       else newG.push(data);
       await db.ref('games_config/apps').set(newG);
@@ -1151,8 +1254,70 @@
         }
       }
     }
+
+    // ── HTML FILE EDITOR FUNCTIONS ──
+
+    function showCodePreview() {
+      const folder = document.getElementById('file-folder').value;
+      const filename = document.getElementById('file-name').value.trim();
+      const code = document.getElementById('html-code-input').value;
+
+      if (!filename) { alert('กรุณากรอกชื่อไฟล์ก่อน เช่น attack-noun.html'); return; }
+      if (!code.trim()) { alert('กรุณาวาง HTML Code ก่อน'); return; }
+
+      // ตรวจสอบนามสกุลไฟล์
+      const fname = filename.endsWith('.html') ? filename : filename + '.html';
+      const fullPath = folder + '/' + fname;
+
+      document.getElementById('preview-filename').textContent = fname;
+      document.getElementById('preview-path-guide').textContent = fullPath;
+      document.getElementById('preview-code-content').textContent = code;
+
+      // reset copy buttons
+      ['copy-top-btn', 'copy-bottom-btn'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) { btn.classList.remove('copied'); }
+      });
+      document.getElementById('copy-top-btn').innerHTML = '<span>📋</span> Copy';
+      document.getElementById('copy-bottom-btn').textContent = '📋 Copy Code ทั้งหมด';
+
+      openModal('code-preview-modal');
+    }
+
+    function copyCode(btnId) {
+      const code = document.getElementById('html-code-input').value;
+      navigator.clipboard.writeText(code).then(() => {
+        const topBtn = document.getElementById('copy-top-btn');
+        const botBtn = document.getElementById('copy-bottom-btn');
+        topBtn.innerHTML = '<span>✅</span> Copied!';
+        topBtn.classList.add('copied');
+        botBtn.textContent = '✅ Copied! ไปวางใน GitHub ได้เลย';
+        botBtn.classList.add('copied');
+        setTimeout(() => {
+          topBtn.innerHTML = '<span>📋</span> Copy';
+          topBtn.classList.remove('copied');
+          botBtn.textContent = '📋 Copy Code ทั้งหมด';
+          botBtn.classList.remove('copied');
+        }, 3000);
+      }).catch(() => {
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = code;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        alert('Copy สำเร็จแล้ว!');
+      });
+    }
+
+    function clearHtmlEditor() {
+      if (confirm('ล้าง code ทั้งหมดใช่ไหม?')) {
+        document.getElementById('html-code-input').value = '';
+        document.getElementById('file-name').value = '';
+      }
+    }
   </script>
 
 </body>
-
 </html>
