@@ -264,6 +264,8 @@
       </div>
     </div>
     <div class="err-msg" id="token-err"></div>
+    <button class="btn btn-outline" style="width:100%;margin-bottom:10px" onclick="testToken()">🔍 ทดสอบ Token ก่อนบันทึก</button>
+    <div id="token-test-result" style="display:none;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;line-height:1.6"></div>
     <div style="display:flex;gap:10px">
       <button class="btn btn-outline" style="flex:1" onclick="closeModal('token-modal')">ยกเลิก</button>
       <button class="btn btn-green" style="flex:2" onclick="saveToken()">💾 บันทึก Token</button>
@@ -495,6 +497,51 @@ function openTokenModal(){
   document.getElementById('token-err').textContent='';
   closeModal('admin-modal');
   openModal('token-modal');
+}
+
+async function testToken(){
+  const val=document.getElementById('token-input').value.trim();
+  const resultEl=document.getElementById('token-test-result');
+  if(!val){
+    resultEl.style.display='block';
+    resultEl.style.cssText='display:block;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;line-height:1.6;background:rgba(248,81,73,.1);border:1px solid rgba(248,81,73,.3);color:#ff7b72';
+    resultEl.textContent='❌ กรุณากรอก Token ก่อน';
+    return;
+  }
+  resultEl.style.cssText='display:block;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;line-height:1.6;background:rgba(47,134,247,.1);border:1px solid rgba(47,134,247,.3);color:#79c0ff';
+  resultEl.textContent='⏳ กำลังทดสอบ Token...';
+  try{
+    // ทดสอบโดย GET repo info
+    const res=await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`,{
+      headers:{Authorization:`Bearer ${val}`,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+    });
+    const data=await res.json();
+    if(res.ok){
+      // ทดสอบสิทธิ์ write โดยเช็ค permissions
+      const permRes=await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/`,{
+        headers:{Authorization:`Bearer ${val}`,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+      });
+      if(permRes.ok){
+        resultEl.style.cssText='display:block;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;line-height:1.6;background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.3);color:#3fb950';
+        resultEl.innerHTML=`✅ Token ใช้งานได้!<br><span style="opacity:.8">Repo: ${data.full_name} • สิทธิ์: ${data.permissions?.push?'Read & Write ✓':'Read only ⚠️'}</span>`;
+      } else {
+        resultEl.style.cssText='display:block;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;line-height:1.6;background:rgba(255,165,0,.1);border:1px solid rgba(255,165,0,.3);color:#ffa500';
+        resultEl.textContent=`⚠️ Token ใช้ได้แต่อาจไม่มีสิทธิ์เขียนไฟล์ — ตรวจสอบ Contents: Read and write`;
+      }
+    } else if(res.status===401){
+      resultEl.style.cssText='display:block;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;line-height:1.6;background:rgba(248,81,73,.1);border:1px solid rgba(248,81,73,.3);color:#ff7b72';
+      resultEl.innerHTML=`❌ 401 Bad credentials — Token ไม่ถูกต้องหรือหมดอายุ<br><span style="opacity:.8">กรุณาสร้าง Token ใหม่ที่ GitHub</span>`;
+    } else if(res.status===404){
+      resultEl.style.cssText='display:block;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;line-height:1.6;background:rgba(248,81,73,.1);border:1px solid rgba(248,81,73,.3);color:#ff7b72';
+      resultEl.innerHTML=`❌ 404 — ไม่พบ repo หรือ Token ไม่มีสิทธิ์เข้าถึง<br><span style="opacity:.8">ตรวจสอบว่าเลือก repo: ${REPO_OWNER}/${REPO_NAME} ใน Token permissions</span>`;
+    } else {
+      resultEl.style.cssText='display:block;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;line-height:1.6;background:rgba(248,81,73,.1);border:1px solid rgba(248,81,73,.3);color:#ff7b72';
+      resultEl.textContent=`❌ Error ${res.status}: ${data.message||'ไม่ทราบสาเหตุ'}`;
+    }
+  }catch(e){
+    resultEl.style.cssText='display:block;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;line-height:1.6;background:rgba(248,81,73,.1);border:1px solid rgba(248,81,73,.3);color:#ff7b72';
+    resultEl.textContent=`❌ Network error: ${e.message}`;
+  }
 }
 
 async function saveToken(){
