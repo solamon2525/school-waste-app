@@ -26,19 +26,15 @@
     @keyframes ptFloat{0%{transform:translateY(110vh) rotate(0deg);opacity:0}10%{opacity:.5}90%{opacity:.4}100%{transform:translateY(-80px) rotate(360deg);opacity:0}}
     .wrap{position:relative;z-index:1;max-width:700px;margin:0 auto;padding:20px 16px 60px}
     .hero{text-align:center;padding:32px 16px 24px}
-    .logo-box{width:96px;height:96px;border-radius:26px;background:linear-gradient(135deg,#0891b2,#0369a1);display:flex;align-items:center;justify-content:center;font-size:48px;margin:0 auto 16px;box-shadow:0 8px 36px rgba(8,145,178,.5);animation:lBounce 3.2s ease-in-out infinite;overflow:hidden;flex-shrink:0}
+    .logo-box{width:96px;height:96px;border-radius:26px;background:transparent;display:flex;align-items:center;justify-content:center;font-size:48px;margin:0 auto 16px;animation:lBounce 3.2s ease-in-out infinite;overflow:hidden;flex-shrink:0}
     @keyframes lBounce{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
-    .logo-box img{width:100%;height:100%;object-fit:cover;border-radius:24px}
+    .logo-box img{width:100%;height:100%;object-fit:contain;border-radius:0;mix-blend-mode:multiply;filter:drop-shadow(0 2px 12px rgba(34,211,238,.4))}
     .school-name{font-size:27px;font-weight:900;background:linear-gradient(135deg,#22d3ee,#7dd3fc,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;margin-bottom:6px}
     .school-sub{color:var(--muted);font-size:14px}
     .greeting{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:6px 18px;margin-top:12px;font-size:13px;color:#94a3b8}
     .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:blink 1.5s infinite}
     @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-    .stats-bar{display:flex;gap:10px;margin-bottom:24px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
-    .stats-bar::-webkit-scrollbar{display:none}
-    .chip{flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 16px;text-align:center;min-width:108px;backdrop-filter:blur(10px)}
-    .chip-num{font-size:22px;font-weight:800;background:linear-gradient(135deg,#22d3ee,#7dd3fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .chip-lbl{font-size:11px;color:var(--muted);margin-top:2px}
+
     .sec-title{font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1.2px;margin:22px 0 12px;display:flex;align-items:center;gap:8px}
     .sec-title::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.06)}
     .apps-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
@@ -138,6 +134,8 @@
     .btn-outline:hover{background:rgba(255,255,255,.06)}
     .drag-edit-btn{flex-shrink:0;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.2);color:#22d3ee;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:Sarabun,sans-serif;transition:all .2s}
     .drag-edit-btn:hover{background:rgba(34,211,238,.22)}
+    .drag-del-btn{flex-shrink:0;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#fca5a5;border-radius:8px;padding:5px 8px;font-size:12px;cursor:pointer;font-family:Sarabun,sans-serif;transition:all .2s}
+    .drag-del-btn:hover{background:rgba(239,68,68,.25);color:#fff}
     .live-toggle-row{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px 16px;margin-bottom:14px}
     .live-toggle-label{display:flex;flex-direction:column;gap:3px}
     .live-toggle-title{font-size:14px;font-weight:700;color:var(--text)}
@@ -221,12 +219,7 @@
     <div class="greeting"><span class="dot"></span><span id="greeting-txt"></span></div>
   </div>
 
-  <div class="stats-bar">
-    <div class="chip"><div class="chip-num" id="qs-members">—</div><div class="chip-lbl">นักเรียน</div></div>
-    <div class="chip"><div class="chip-num" id="qs-waste">—</div><div class="chip-lbl">ขยะ (กก.)</div></div>
-    <div class="chip"><div class="chip-num" id="qs-records">—</div><div class="chip-lbl">รายการ</div></div>
-    <div class="chip"><div class="chip-num" id="qs-today">—</div><div class="chip-lbl">วันนี้ (กก.)</div></div>
-  </div>
+
 
   <div id="apps-render"></div>
 
@@ -507,21 +500,7 @@ function renderApps(apps){
   container.innerHTML=html;
 }
 
-// ── STATS ──
-db.ref('records').on('value',snap=>{
-  const vals=snap.val()?Object.values(snap.val()):[];
-  const total=vals.reduce((s,r)=>s+(r.total||0),0);
-  const today=new Date().toISOString().slice(0,10);
-  const td=vals.filter(r=>r.date?.slice(0,10)===today).reduce((s,r)=>s+(r.total||0),0);
-  document.getElementById('qs-waste').textContent=total.toLocaleString();
-  document.getElementById('qs-records').textContent=vals.length.toLocaleString();
-  document.getElementById('qs-today').textContent=td.toLocaleString();
-});
-db.ref('members').on('value',snap=>{
-  const v=snap.val();
-  const c=v?Object.values(v).filter(m=>m.type==='student').length:0;
-  document.getElementById('qs-members').textContent=c.toLocaleString();
-});
+
 
 // ── THAI DATE ──
 const DAYS_TH=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
@@ -591,7 +570,7 @@ function buildDragList(apps){
   apps.forEach(a=>{
     const item=document.createElement('div');item.className='drag-item';item.draggable=true;item.dataset.id=a.id;
     const urlShort=a.url&&a.url!=='#'?a.url.replace(/^https?:\/\//,'').substring(0,30)+(a.url.length>30?'…':''):'—';
-    item.innerHTML=`<span class="drag-handle">⠿</span><span class="drag-icon" id="dicon-${a.id}">${a.icon}</span><div class="drag-info"><div class="drag-title" id="dtitle-${a.id}">${a.name}</div><div class="drag-sub" id="dsub-${a.id}">${a.live?'🟢 พร้อมใช้งาน':'🔜 เร็วๆ นี้'}</div><div class="drag-sub-url" id="durl-${a.id}" title="${a.url||'#'}">🔗 ${urlShort}</div></div><button class="drag-edit-btn" onclick="openEditApp('${a.id}')">✏️ แก้ไข</button><label class="toggle drag-toggle"><input type="checkbox" ${a.visible?'checked':''} onchange="toggleApp('${a.id}',this.checked)"/><span class="toggle-slider"></span></label>`;
+    item.innerHTML=`<span class="drag-handle">⠿</span><span class="drag-icon" id="dicon-${a.id}">${a.icon}</span><div class="drag-info"><div class="drag-title" id="dtitle-${a.id}">${a.name}</div><div class="drag-sub" id="dsub-${a.id}">${a.live?'🟢 พร้อมใช้งาน':'🔜 เร็วๆ นี้'}</div><div class="drag-sub-url" id="durl-${a.id}" title="${a.url||'#'}">🔗 ${urlShort}</div></div><button class="drag-edit-btn" onclick="openEditApp('${a.id}')">✏️</button><button class="drag-del-btn" onclick="deleteApp('${a.id}')" title="ลบเมนูนี้">🗑</button><label class="toggle drag-toggle"><input type="checkbox" ${a.visible?'checked':''} onchange="toggleApp('${a.id}',this.checked)"/><span class="toggle-slider"></span></label>`;
     item.addEventListener('dragstart',e=>{dragSrc=item;item.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
     item.addEventListener('dragend',()=>{item.classList.remove('dragging');document.querySelectorAll('.drag-item').forEach(x=>x.classList.remove('drag-over'));});
     item.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='move';item.classList.add('drag-over');});
@@ -608,6 +587,12 @@ async function saveApps(){
   try{await db.ref('superapp_config/apps').set(newApps);cfg.apps=newApps;renderApps(newApps);showToast('✅ บันทึกลำดับแอปสำเร็จ!');}catch(e){showToast('❌ บันทึกไม่สำเร็จ',true);}
 }
 
+function deleteApp(id){
+  if(!confirm('ลบเมนู "'+( cfg.apps.find(a=>a.id===id)?.name||id )+'" ออกถาวรหรือไม่?\n(สามารถเพิ่มกลับได้จาก DEFAULT_APPS)'))return;
+  cfg.apps=cfg.apps.filter(a=>a.id!==id);
+  buildDragList(cfg.apps);
+  showToast('🗑 ลบเมนูแล้ว — กด "บันทึกลำดับแอป" เพื่อยืนยัน');
+}
 function addTouchDrag(item,list){
   let startY,clone,origRect;
   item.addEventListener('touchstart',e=>{if(!e.target.closest('.drag-handle'))return;startY=e.touches[0].clientY;origRect=item.getBoundingClientRect();clone=item.cloneNode(true);clone.style.cssText=`position:fixed;top:${origRect.top}px;left:${origRect.left}px;width:${origRect.width}px;z-index:999;opacity:.85;pointer-events:none;border:1px solid #4ade80;border-radius:12px`;document.body.appendChild(clone);item.style.opacity='.3';},{passive:true});
