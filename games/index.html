@@ -292,6 +292,7 @@
     </div>
     <input type="hidden" id="edit-img-data" />
     <input type="hidden" id="edit-id" />
+    <input type="hidden" id="edit-original-url" />
 
     <!-- ข้อมูลเกม -->
     <div class="form-group">
@@ -307,9 +308,20 @@
         <option value="other">✨ อื่นๆ</option>
       </select>
     </div>
+
+    <!-- URL / PATH -->
     <div class="form-group">
-      <label>ลิงก์ URL (path ไฟล์ หรือลิงก์นอก)</label>
+      <label>ลิงก์ URL หรือ path ไฟล์</label>
       <input class="form-input" id="edit-url" placeholder="games/thai/attack-noun.html หรือ https://..." oninput="onEditUrlChange()" />
+      <!-- แสดง path เดิม + ลิงก์เปิดเล่น (เฉพาะไฟล์ใน repo) -->
+      <div id="edit-url-info" style="display:none;margin-top:6px">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-size:11px;color:var(--muted)">path เดิม:</span>
+          <code id="edit-original-url-display" style="font-size:11px;color:#79c0ff;background:rgba(47,134,247,.08);padding:2px 8px;border-radius:4px"></code>
+          <a id="edit-play-link" href="#" target="_blank" style="font-size:12px;color:#3fb950;text-decoration:none;border:1px solid rgba(63,185,80,.3);padding:2px 10px;border-radius:4px">▶ เปิดเล่น</a>
+        </div>
+        <div id="edit-rename-warn" style="display:none;font-size:11px;color:#ffa500;margin-top:4px">⚠️ ชื่อไฟล์เปลี่ยน — ระบบจะสร้างไฟล์ใหม่และลบไฟล์เดิมใน GitHub อัตโนมัติ</div>
+      </div>
     </div>
 
     <!-- แก้ไข HTML (เฉพาะไฟล์ใน repo) -->
@@ -317,7 +329,7 @@
       <hr class="sec-divider">
       <div class="sec-heading">✏️ แก้ไข HTML ของเกม</div>
       <button class="btn btn-outline" style="width:100%;margin-bottom:10px" id="fetch-html-btn" onclick="fetchGameHtml()">⬇️ ดึง HTML จาก GitHub มาแก้ไข</button>
-      <div id="fetch-html-status" style="font-size:12px;color:var(--muted);margin-bottom:8px;display:none"></div>
+      <div id="fetch-html-status" style="font-size:12px;margin-bottom:8px;display:none"></div>
       <textarea class="code-area" id="edit-html-code" placeholder="HTML Code จะปรากฏที่นี่หลังกด ดึง HTML..." style="min-height:200px"></textarea>
       <button class="btn btn-blue" style="margin-top:8px" id="push-edit-btn" onclick="pushEditedHtml()">🚀 บันทึก HTML ขึ้น GitHub</button>
       <div class="push-status" id="edit-push-status"></div>
@@ -678,13 +690,19 @@ function handleImgUpload(e){
 }
 function onEditUrlChange(){
   const url=document.getElementById('edit-url').value.trim();
-  // แสดงส่วนแก้ HTML เฉพาะไฟล์ใน repo (ไม่ใช่ external link)
+  const origUrl=document.getElementById('edit-original-url').value;
   const isLocal=url&&!url.startsWith('http');
   document.getElementById('edit-html-section').style.display=isLocal?'block':'none';
-  // reset
   document.getElementById('edit-html-code').value='';
   document.getElementById('fetch-html-status').style.display='none';
   document.getElementById('edit-push-status').style.display='none';
+
+  // แสดง/ซ่อน rename warning
+  if(origUrl&&isLocal&&url!==origUrl){
+    document.getElementById('edit-rename-warn').style.display='block';
+  } else {
+    document.getElementById('edit-rename-warn').style.display='none';
+  }
 }
 
 function openEditModal(id){
@@ -695,25 +713,46 @@ function openEditModal(id){
   document.getElementById('edit-name').value=g?g.name:'';
   document.getElementById('edit-cat').value=g?g.cat:'thai';
   document.getElementById('edit-url').value=g?(g.url||''):'';
+  document.getElementById('edit-original-url').value=g?(g.url||''):''; // เก็บ path เดิม
   document.getElementById('edit-img-data').value=g?(g.img||''):'';
   document.getElementById('edit-img-preview').src=g?(g.img||''):'';
   document.getElementById('edit-img-preview').style.display=g&&g.img?'block':'none';
   document.getElementById('edit-html-code').value='';
   document.getElementById('fetch-html-status').style.display='none';
   document.getElementById('edit-push-status').style.display='none';
-  // แสดงส่วน HTML ถ้า url เป็น local path
+  document.getElementById('edit-rename-warn').style.display='none';
+
   const isLocal=g&&g.url&&!g.url.startsWith('http');
   document.getElementById('edit-html-section').style.display=isLocal?'block':'none';
+
+  // แสดง path เดิม + ลิงก์เปิดเล่น
+  const urlInfo=document.getElementById('edit-url-info');
+  if(g&&g.url){
+    urlInfo.style.display='block';
+    document.getElementById('edit-original-url-display').textContent=g.url;
+    const playUrl=isLocal
+      ?`https://${REPO_OWNER}.github.io/${REPO_NAME}/${g.url}`
+      :g.url;
+    const playLink=document.getElementById('edit-play-link');
+    playLink.href=playUrl;
+    playLink.style.display='inline';
+  } else {
+    urlInfo.style.display='none';
+  }
+
   openModal('edit-modal');
 }
 
 async function fetchGameHtml(){
-  const url=document.getElementById('edit-url').value.trim();
-  if(!url||url.startsWith('http')){alert('URL ต้องเป็น path ในไฟล์ repo เช่น games/thai/attack-noun.html');return;}
+  // ดึงจาก original path เสมอ (ก่อนเปลี่ยนชื่อ)
+  const origUrl=document.getElementById('edit-original-url').value.trim();
+  const url=origUrl||document.getElementById('edit-url').value.trim();
+  if(!url||url.startsWith('http')){alert('URL ต้องเป็น path ในไฟล์ repo');return;}
   if(!GH_TOKEN){alert('กรุณาตั้งค่า GitHub Token ก่อน');return;}
   const statusEl=document.getElementById('fetch-html-status');
   const btn=document.getElementById('fetch-html-btn');
   statusEl.style.display='block';
+  statusEl.style.color='var(--muted)';
   statusEl.textContent='⏳ กำลังดึง HTML จาก GitHub...';
   btn.disabled=true;
   try{
@@ -723,13 +762,12 @@ async function fetchGameHtml(){
     });
     if(res.ok){
       const data=await res.json();
-      // decode base64 content
       const decoded=decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
       document.getElementById('edit-html-code').value=decoded;
-      statusEl.textContent=`✅ โหลดสำเร็จ (${decoded.length} chars) — แก้ไขแล้วกด "บันทึก HTML"`;
+      statusEl.textContent=`✅ โหลดสำเร็จ (${decoded.length.toLocaleString()} chars)`;
       statusEl.style.color='#3fb950';
     } else if(res.status===404){
-      statusEl.textContent='❌ ไม่พบไฟล์ใน repo — ตรวจสอบ path อีกครั้ง';
+      statusEl.textContent='❌ ไม่พบไฟล์ใน repo';
       statusEl.style.color='#ff7b72';
     } else {
       statusEl.textContent=`❌ Error ${res.status}`;
@@ -743,34 +781,67 @@ async function fetchGameHtml(){
 }
 
 async function pushEditedHtml(){
-  const url=document.getElementById('edit-url').value.trim();
+  const origUrl=document.getElementById('edit-original-url').value.trim();
+  const newUrl=document.getElementById('edit-url').value.trim();
   const code=document.getElementById('edit-html-code').value;
   const statusEl=document.getElementById('edit-push-status');
   const btn=document.getElementById('push-edit-btn');
   if(!code.trim()){statusEl.className='push-status error';statusEl.textContent='❌ HTML ว่างอยู่';return;}
   if(!GH_TOKEN){statusEl.className='push-status error';statusEl.textContent='❌ ไม่มี Token';return;}
+
+  const isRename=origUrl&&newUrl&&origUrl!==newUrl&&!newUrl.startsWith('http');
   btn.disabled=true;
   statusEl.className='push-status loading';
-  statusEl.textContent='⏳ กำลังบันทึก HTML ขึ้น GitHub...';
-  const apiUrl=`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${url}`;
+  statusEl.textContent=isRename?'⏳ กำลังเปลี่ยนชื่อไฟล์และบันทึก...':'⏳ กำลังบันทึก HTML ขึ้น GitHub...';
+
+  const encoded=btoa(unescape(encodeURIComponent(code)));
+  const headers={Authorization:`Bearer ${GH_TOKEN}`,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'};
+
   try{
+    // 1. สร้าง/อัปเดตไฟล์ที่ newUrl (หรือ origUrl ถ้าไม่เปลี่ยน)
+    const targetUrl=isRename?newUrl:origUrl;
+    const targetApi=`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${targetUrl}`;
     let sha=null;
-    const checkRes=await fetch(apiUrl,{headers:{Authorization:`Bearer ${GH_TOKEN}`,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}});
-    if(checkRes.ok){const ex=await checkRes.json();sha=ex.sha;}
-    const encoded=btoa(unescape(encodeURIComponent(code)));
-    const res=await fetch(apiUrl,{
-      method:'PUT',
-      headers:{Authorization:`Bearer ${GH_TOKEN}`,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'},
-      body:JSON.stringify({message:`อัปเดตเกม: ${url}`,content:encoded,...(sha&&{sha})})
+    const chk=await fetch(targetApi,{headers});
+    if(chk.ok){const ex=await chk.json();sha=ex.sha;}
+
+    const putRes=await fetch(targetApi,{
+      method:'PUT',headers,
+      body:JSON.stringify({message:`${isRename?'ย้ายไฟล์':'อัปเดต'}: ${targetUrl}`,content:encoded,...(sha&&{sha})})
     });
-    if(res.ok){
-      statusEl.className='push-status success';
-      statusEl.textContent='✅ บันทึก HTML สำเร็จ!';
-    } else {
-      const e=await res.json().catch(()=>({}));
+    if(!putRes.ok){
+      const e=await putRes.json().catch(()=>({}));
       statusEl.className='push-status error';
-      statusEl.textContent=`❌ Error ${res.status}: ${e.message||''}`;
+      statusEl.textContent=`❌ Error ${putRes.status}: ${e.message||''}`;
+      btn.disabled=false;return;
     }
+
+    // 2. ถ้าเปลี่ยนชื่อ → ลบไฟล์เดิม
+    if(isRename){
+      const origApi=`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${origUrl}`;
+      const origChk=await fetch(origApi,{headers});
+      if(origChk.ok){
+        const origData=await origChk.json();
+        await fetch(origApi,{
+          method:'DELETE',headers,
+          body:JSON.stringify({message:`ลบไฟล์เดิม: ${origUrl}`,sha:origData.sha})
+        });
+      }
+      // อัปเดต original url ใน hidden field
+      document.getElementById('edit-original-url').value=newUrl;
+      // อัปเดตปุ่มเปิดเล่น
+      document.getElementById('edit-original-url-display').textContent=newUrl;
+      const playUrl=`https://${REPO_OWNER}.github.io/${REPO_NAME}/${newUrl}`;
+      document.getElementById('edit-play-link').href=playUrl;
+      document.getElementById('edit-rename-warn').style.display='none';
+    }
+
+    const finalUrl=isRename?newUrl:origUrl;
+    const pageUrl=`https://${REPO_OWNER}.github.io/${REPO_NAME}/${finalUrl}`;
+    statusEl.className='push-status success';
+    statusEl.innerHTML=`✅ ${isRename?'เปลี่ยนชื่อและบันทึก':'บันทึก'}สำเร็จ!<br>
+      <a href="${pageUrl}" target="_blank" style="color:#3fb950;font-size:12px">▶ เปิดเล่นทันที: ${finalUrl}</a>`;
+
   }catch(e){
     statusEl.className='push-status error';
     statusEl.textContent=`❌ ${e.message}`;
@@ -788,6 +859,15 @@ async function saveGameData(){
   let newG=[...GAMES];
   if(id)newG=newG.map(g=>g.id===id?{...g,...data}:g);else newG.push(data);
   await db.ref('games_config/apps').set(newG);
+  // อัปเดตลิงก์เปิดเล่น
+  const isLocal=url&&!url.startsWith('http');
+  if(isLocal){
+    const playUrl=`https://${REPO_OWNER}.github.io/${REPO_NAME}/${url}`;
+    document.getElementById('edit-play-link').href=playUrl;
+    document.getElementById('edit-original-url-display').textContent=url;
+    document.getElementById('edit-original-url').value=url;
+  }
+  alert('✅ บันทึกข้อมูลเกมสำเร็จ');
   closeModal('edit-modal');
 }
 async function deleteGame(){
