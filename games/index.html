@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="th">
 
@@ -762,6 +763,75 @@
         gap: 12px
       }
     }
+
+    textarea.form-input {
+      resize: vertical;
+      min-height: 120px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .html-badge {
+      background: rgba(74, 222, 128, .15);
+      color: #4ade80;
+      border: 1px solid rgba(74, 222, 128, .3);
+    }
+
+    #game-play-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #000;
+      flex-direction: column;
+    }
+
+    #game-play-modal.open {
+      display: flex;
+    }
+
+    .game-play-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #0d1117;
+      padding: 8px 16px;
+      border-bottom: 1px solid #30363d;
+      flex-shrink: 0;
+    }
+
+    .game-play-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #e6edf3;
+    }
+
+    .game-play-close {
+      background: #da3633;
+      border: none;
+      color: #fff;
+      padding: 6px 18px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .game-play-close:hover {
+      background: #f85149;
+    }
+
+    #game-iframe {
+      flex: 1;
+      border: none;
+      width: 100%;
+    }
+
+    .card {
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -887,6 +957,18 @@
         <label>ลิงก์ URL (ไฟล์ HTML หรือ ลิงก์นอก)</label>
         <input class="form-input" id="edit-url" placeholder="thai/game.html หรือ https://..." />
       </div>
+      <div class="form-group">
+        <label>📋 โค้ด HTML เกม <span style="color:var(--muted);font-weight:400;font-size:11px">(ไม่บังคับ — ถ้าใส่ จะเล่นจากโค้ดนี้แทน URL)</span></label>
+        <textarea class="form-input" id="edit-htmlcode" rows="9" placeholder="วางโค้ด HTML ทั้งหมดของเกมที่นี่...
+
+เช่น:
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>เกมของฉัน</h1>
+</body>
+</html>"></textarea>
+      </div>
       <div style="display:flex;gap:10px;margin-top:20px">
         <button class="btn btn-outline" style="flex:1" onclick="closeModal('edit-modal')">ยกเลิก</button>
         <button class="btn btn-green" style="flex:2" onclick="saveGameData()">💾 บันทึก</button>
@@ -953,13 +1035,16 @@
       if (!data.length) { grid.innerHTML = ""; empty.classList.add("on"); return }
       empty.classList.remove("on");
       grid.innerHTML = data.map(g => `
-    <a class="card" href="${g.url}" target="_blank">
+    <div class="card" onclick="openGameById('${g.id}')">
       <div class="thumb"><img src="${g.img || 'https://via.placeholder.com/300x170'}" alt="${g.name}" loading="lazy"/></div>
       <div class="card-body">
         <div class="card-name">${g.name}</div>
-        <div class="card-tags"><span class="tag t-${g.cat}">${catLabel(g.cat)}</span></div>
+        <div class="card-tags">
+          <span class="tag t-${g.cat}">${catLabel(g.cat)}</span>
+          ${g.htmlCode ? '<span class="tag html-badge">🎮 โค้ดในตัว</span>' : ''}
+        </div>
       </div>
-    </a>`).join("");
+    </div>`).join("");
     }
 
     function catLabel(c) { return { thai: "ภาษาไทย", math: "คณิตศาสตร์", tech: "เทคโนโลยี", other: "อื่นๆ" }[c] || c }
@@ -1095,10 +1180,11 @@
       dom.id.value = g ? g.id : '';
       dom.name.value = g ? g.name : '';
       dom.cat.value = g ? g.cat : 'thai';
-      dom.url.value = g ? g.url : '';
+      dom.url.value = g ? (g.url || '') : '';
       dom.img.value = g ? (g.img || '') : '';
       dom.prev.src = g ? (g.img || '') : '';
       dom.prev.style.display = g && g.img ? 'block' : 'none';
+      document.getElementById('edit-htmlcode').value = g ? (g.htmlCode || '') : '';
       openModal('edit-modal');
     }
 
@@ -1106,9 +1192,11 @@
       const id = document.getElementById('edit-id').value;
       const name = document.getElementById('edit-name').value.trim();
       const url = document.getElementById('edit-url').value.trim();
-      if (!name || !url) { alert('กรุณากรอกชื่อและลิงก์ให้ครบถ้วน'); return; }
+      const htmlCode = document.getElementById('edit-htmlcode').value.trim();
+      if (!name) { alert('กรุณากรอกชื่อเกม'); return; }
+      if (!url && !htmlCode) { alert('กรุณากรอกลิงก์ URL หรือวางโค้ด HTML อย่างน้อยอย่างใดอย่างหนึ่ง'); return; }
       let newG = [...GAMES];
-      const data = { id: id || 'g_' + Date.now(), name, url, cat: document.getElementById('edit-cat').value, img: document.getElementById('edit-img-data').value, visible: true };
+      const data = { id: id || 'g_' + Date.now(), name, url, htmlCode, cat: document.getElementById('edit-cat').value, img: document.getElementById('edit-img-data').value, visible: true };
       if (id) newG = newG.map(g => g.id === id ? { ...g, ...data } : g);
       else newG.push(data);
       await db.ref('games_config/apps').set(newG);
@@ -1127,7 +1215,41 @@
       await db.ref('games_config/apps').set(items.map(el => GAMES.find(g => g.id === el.dataset.id)).filter(Boolean));
       alert('บันทึกลำดับเกมสำเร็จ');
     }
+
+    function openGameById(id) {
+      const g = GAMES.find(x => x.id === id);
+      if (!g) return;
+      openGame(g);
+    }
+
+    function openGame(g) {
+      if (g.htmlCode) {
+        document.getElementById('game-play-title').textContent = '🎮 ' + g.name;
+        document.getElementById('game-iframe').srcdoc = g.htmlCode;
+        document.getElementById('game-play-modal').classList.add('open');
+      } else if (g.url) {
+        window.open(g.url, '_blank');
+      }
+    }
+
+    function closeGamePlay() {
+      document.getElementById('game-play-modal').classList.remove('open');
+      document.getElementById('game-iframe').srcdoc = '';
+    }
   </script>
+
+  <!-- GAME PLAY MODAL -->
+  <div id="game-play-modal">
+    <div class="game-play-bar">
+      <span class="game-play-title" id="game-play-title">🎮 กำลังเล่น...</span>
+      <button class="game-play-close" onclick="closeGamePlay()">✕ ปิด</button>
+    </div>
+    <iframe id="game-iframe" sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups allow-modals"></iframe>
+  </div>
+
 </body>
 
 </html>
+Pressing key...Clicking...Stopping...
+
+Stop Agent
