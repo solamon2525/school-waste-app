@@ -477,7 +477,7 @@ async function loadTokenFromFirebase(){
   try{
     const snap=await db.ref(TOKEN_PATH).get();
     if(snap.exists()&&snap.val()){
-      GH_TOKEN=snap.val();
+      GH_TOKEN=snap.val().trim();
       dot.className='token-dot ok';
       txt.textContent='Token พร้อมใช้งาน ✓';
     } else {
@@ -553,8 +553,8 @@ async function saveToken(){
     err.textContent='Token ไม่ถูกรูปแบบ (ควรขึ้นต้นด้วย ghp_ หรือ github_pat_)';return;
   }
   try{
-    await db.ref(TOKEN_PATH).set(val);
-    GH_TOKEN=val;
+    await db.ref(TOKEN_PATH).set(val.trim());
+    GH_TOKEN=val.trim();
     closeModal('token-modal');
     openModal('admin-modal');
     // อัปเดต status bar
@@ -727,7 +727,9 @@ async function pushToGitHub(){
     } else {
       const errData=await res.json().catch(()=>({}));
       statusEl.className='push-status error';
-      statusEl.textContent=`❌ Error ${res.status}: ${errData.message||'ไม่สามารถอัปโหลดได้'}`;
+      const tokenPreview=GH_TOKEN?`${GH_TOKEN.substring(0,8)}... (length:${GH_TOKEN.length})`:'(ว่าง)';
+      statusEl.innerHTML=`❌ Error ${res.status}: ${errData.message||'ไม่สามารถอัปโหลดได้'}<br>
+        <span style="font-size:11px;opacity:.7">Token ที่ใช้: ${tokenPreview}</span>`;
     }
   }catch(e){
     statusEl.className='push-status error';
